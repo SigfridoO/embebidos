@@ -1,3 +1,20 @@
+// Temporizadores
+
+#define  numeroDeTON 16
+struct temporizador {
+    byte entrada;
+    byte salida;
+    unsigned long tiempo;
+    unsigned long tiempoActual;
+} TON[numeroDeTON];
+struct temporizadorAux {
+    byte bandera;
+    unsigned long tiempo_Aux1;
+    unsigned long tiempo_Aux2;
+} TON_Aux[numeroDeTON];
+
+void actualizarTON (int);
+
 // Digitales
 int DI0 = 36;
 int DI1 = 39;
@@ -32,6 +49,9 @@ void setup() {
 
   // Configuracion del puerto serie
   Serial.begin(9600);
+
+  // Temporizadores
+    TON[0].tiempo = (unsigned long)1 * 400;
 }
 
 void loop() {
@@ -45,6 +65,11 @@ void loop() {
   Y0 = X0;
   actualizarSenalesDigitales();
   leerSenalesAnalog();
+
+
+  //   
+  // TON[0].entrada = ###########;    // Señal de entrada al TON
+  // actualizarTON(0);
 
 }
 
@@ -65,4 +90,28 @@ void actualizarSenalesDigitales() {
 
 void leerSenalesAnalog() {
   VA0 = analogRead(AI0);
+}
+
+
+
+// Temporizadores
+
+void actualizarTON (int i) {
+     if (TON [i].entrada)
+   {
+        if (!TON_Aux[i].bandera) {
+           TON_Aux[i].bandera = true;
+           TON_Aux[i].tiempo_Aux1 = millis ();  
+        }
+        TON_Aux[i].tiempo_Aux2 = millis ();
+        TON [i].tiempoActual = TON_Aux[i].tiempo_Aux2 - TON_Aux[i].tiempo_Aux1;
+
+        if (TON [i].tiempoActual > TON [i].tiempo) {
+            TON [i].salida = true;
+        }
+    } else {
+        TON [i].salida = false;
+        TON_Aux[i].bandera = false;
+    }
+
 }

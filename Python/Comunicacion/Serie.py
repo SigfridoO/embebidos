@@ -20,7 +20,10 @@ def main():
         puerto_serie.write(cadena)
         time.sleep(0.01)
         res = puerto_serie.read(1)
-        print(res)
+        print(res, 
+              int.from_bytes(res), 
+              res.decode(), 
+              ' '.join('{0:02X}'.format(e) for e in res))
     puerto_serie.close()
 
 

@@ -51,7 +51,8 @@ void setup() {
   Serial.begin(9600);
 
   // Temporizadores
-    TON[0].tiempo = (unsigned long)1 * 400;
+  TON[0].tiempo = (unsigned long) 1000;
+  TON[1].tiempo = (unsigned long) 500;
 }
 
 void loop() {
@@ -61,15 +62,21 @@ void loop() {
   // Procesando la comunicación
   leerDatos();
 
+
+  // Temporizador
+  TON[0].entrada = !TON[1].salida;
+  actualizarTON(0);
+
+  TON[1].entrada = TON[0].salida;
+  actualizarTON(1);
   
-  Y0 = X0;
+  Y1 = TON[0].salida;
+
+  
   actualizarSenalesDigitales();
   leerSenalesAnalog();
 
 
-  //   
-  // TON[0].entrada = ###########;    // Señal de entrada al TON
-  // actualizarTON(0);
 
 }
 

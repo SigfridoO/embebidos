@@ -16,6 +16,7 @@ int Y1;
 
 int VA0 = 0;
 
+void leerDatos();
 void actualizarSenalesDigitales();
 void leerSenalesAnalog();
 
@@ -34,16 +35,25 @@ void setup() {
 }
 
 void loop() {
-  Y1 = 1;
-  delay(2000);
-  actualizarSenalesDigitales();
-  Y1 = 0;
-  delay(2000);
+
+
+
+  // Procesando la comunicación
+  leerDatos();
+
+  
   Y0 = X0;
   actualizarSenalesDigitales();
   leerSenalesAnalog();
-  Serial.print("\nVA: ");
-  Serial.print(VA0);
+
+}
+
+void leerDatos() {
+  byte caracter = 0;
+  while(Serial.available() > 0) {
+    caracter = Serial.read();
+    Serial.write(caracter + 10);
+  }
 }
 
 void actualizarSenalesDigitales() {

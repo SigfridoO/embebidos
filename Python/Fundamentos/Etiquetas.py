@@ -17,7 +17,6 @@ class Ventana(QMainWindow):
                                  | Qt.AlignmentFlag.AlignVCenter)
         fuente = QFont('Manjari', 24)
         mi_etiqueta.setFont(fuente)
-
         #print(abs_path("lemur.jpg"))
         imagen = QPixmap(abs_path("lemur.jpg"))
         mi_etiqueta.setPixmap(imagen)

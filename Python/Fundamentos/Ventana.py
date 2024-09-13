@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, \
-    QLabel
+    QPushButton, QLabel, QLineEdit
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QPixmap
 import sys
@@ -11,20 +11,12 @@ def abs_path(nombre):
 class Ventana(QMainWindow):
     def __init__(self):
         super().__init__()
-        print('Creando la ventana')
-        mi_etiqueta = QLabel("Saludos")
-        mi_etiqueta.setAlignment(Qt.AlignmentFlag.AlignHCenter \
-                                 | Qt.AlignmentFlag.AlignVCenter)
-        fuente = QFont('Manjari', 24)
-        mi_etiqueta.setFont(fuente)
 
-        #print(abs_path("lemur.jpg"))
-        imagen = QPixmap(abs_path("lemur.jpg"))
-        mi_etiqueta.setPixmap(imagen)
-        mi_etiqueta.setScaledContents(True)
+        campo_texto = QLineEdit()
 
-        self.setCentralWidget(mi_etiqueta)
-        self.setFixedSize(400, 300)
+
+        self.setCentralWidget(campo_texto)
+        self.setFixedSize(300, 150)
 
 
 def main():

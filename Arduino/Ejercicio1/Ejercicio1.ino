@@ -1,3 +1,4 @@
+
 // Temporizadores
 
 #define  numeroDeTON 16
@@ -33,9 +34,26 @@ int Y1;
 
 int VA0 = 0;
 
-void leerDatos();
 void actualizarSenalesDigitales();
 void leerSenalesAnalog();
+
+// Comunicación
+/*
+ *  CI|R  I  E |TI|NU|DATOS .....................  |LG|V| CF
+    00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18
+    CI -- Caracter Inicial
+    TI    Tipo de instrucción
+    NU    Numero de instrucción
+    LG   Longitud
+    V  Verificación
+    CF  Caracter f
+*/
+
+#define bufferIndiceMaximo 120
+byte bufferLectura[bufferIndiceMaximo];
+int bufferIndice = 0;
+
+void colocarDatosEnBuffer();
 
 void setup() {
 
@@ -60,7 +78,7 @@ void loop() {
 
 
   // Procesando la comunicación
-  leerDatos();
+  colocarDatosEnBuffer();
 
 
   // Temporizador
@@ -70,8 +88,9 @@ void loop() {
   TON[1].entrada = TON[0].salida;
   actualizarTON(1);
   
-  Y1 = TON[0].salida;
-
+  Y0 = TON[0].salida;
+  Y1 = !Y0;
+  //Serial.println(TON[1].tiempoActual);
   
   actualizarSenalesDigitales();
   leerSenalesAnalog();
@@ -80,11 +99,11 @@ void loop() {
 
 }
 
-void leerDatos() {
+void colocarDatosEnBuffer() {
   byte caracter = 0;
   while(Serial.available() > 0) {
     caracter = Serial.read();
-    Serial.write(caracter + 10);
+    //Serial.write(caracter + 10);
   }
 }
 

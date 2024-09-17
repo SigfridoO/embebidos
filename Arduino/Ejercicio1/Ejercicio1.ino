@@ -54,6 +54,7 @@ byte bufferLectura[bufferIndiceMaximo];
 int bufferIndice = 0;
 
 void colocarDatosEnBuffer();
+void imprimirTrama(byte *, int , int );
 
 void setup() {
 
@@ -103,9 +104,19 @@ void colocarDatosEnBuffer() {
   byte caracter = 0;
   while(Serial.available() > 0) {
     caracter = Serial.read();
-    //Serial.write(caracter + 10);
+    bufferLectura[bufferIndice++] = caracter;
+  }
+
+  imprimirTrama(bufferLectura, 0, bufferIndice);
+}
+
+void imprimirTrama(byte *ptrTrama, int inicio, int tamanio) {
+  Serial.print("\n>>");
+  for (int k = inicio; k < inicio + tamanio ; k++) {
+    Serial.write(ptrTrama[k]);
   }
 }
+
 
 void actualizarSenalesDigitales() {
   X0 = digitalRead(DI0);

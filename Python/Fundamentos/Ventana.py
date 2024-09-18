@@ -25,9 +25,7 @@ class Ventana(QMainWindow):
         print(texto)
 
     def cambiar_indice(self, indice):
-        print(
-            #type(indice), 
-              indice)
+        print(type(indice), indice)
 
 
 

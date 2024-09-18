@@ -49,7 +49,7 @@ void leerSenalesAnalog();
     CF  Caracter f
 */
 
-#define bufferIndiceMaximo 120
+#define bufferIndiceMaximo 12
 byte bufferLectura[bufferIndiceMaximo];
 int bufferIndice = 0;
 
@@ -102,11 +102,19 @@ void loop() {
 
 void colocarDatosEnBuffer() {
   byte caracter = 0;
+  int aux = 0;
   while(Serial.available() > 0) {
     caracter = Serial.read();
     bufferLectura[bufferIndice++] = caracter;
-  }
 
+    if (bufferIndice  + 1 > bufferIndiceMaximo) {
+      aux = bufferIndiceMaximo >> 1;
+      for (int i = aux; i < bufferIndiceMaximo + 1; i++) {
+        bufferIndice = i - aux;
+        bufferLectura[bufferIndice] = bufferLectura[i];
+      }
+    }
+  }
   imprimirTrama(bufferLectura, 0, bufferIndice);
 }
 

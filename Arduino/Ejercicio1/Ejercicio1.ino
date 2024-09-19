@@ -49,9 +49,17 @@ void leerSenalesAnalog();
     CF  Caracter f
 */
 
-#define bufferIndiceMaximo 12
+#define bufferIndiceMaximo 120
 byte bufferLectura[bufferIndiceMaximo];
 int bufferIndice = 0;
+
+byte bufferInstruccion[bufferIndiceMaximo];
+int bufferIndiceInstruccion = 0;
+
+void leerInstruccionDeBuffer(byte *, int *, byte *, int *);
+
+char caracterDeInicio = '*';
+char caracterDeFin = '¡';
 
 void colocarDatosEnBuffer();
 void imprimirTrama(byte *, int , int );
@@ -80,6 +88,7 @@ void loop() {
 
   // Procesando la comunicación
   colocarDatosEnBuffer();
+  leerInstruccionDeBuffer(bufferLectura, &bufferIndice, bufferInstruccion, &bufferIndiceInstruccion);
 
 
   // Temporizador
@@ -115,7 +124,7 @@ void colocarDatosEnBuffer() {
       }
     }
   }
-  imprimirTrama(bufferLectura, 0, bufferIndice);
+  //imprimirTrama(bufferLectura, 0, bufferIndice);
 }
 
 void imprimirTrama(byte *ptrTrama, int inicio, int tamanio) {
@@ -125,6 +134,20 @@ void imprimirTrama(byte *ptrTrama, int inicio, int tamanio) {
   }
 }
 
+void leerInstruccionDeBuffer(byte *ptrBufferLetura, int *ptrBufferIndice, byte *ptrBufferInstruccion, 
+  int *ptrTamanioBufferInstruccion) {
+    int i  = 0;
+    int k = 0;
+
+    int encontrado = -1;
+
+    if (ptrBufferLectura[*ptrBufferIndice] == caracterDeFin) {
+      for (k = *ptrBufferIndice; k >= 0; --k) {
+        
+      }
+    }
+    
+ }
 
 void actualizarSenalesDigitales() {
   X0 = digitalRead(DI0);

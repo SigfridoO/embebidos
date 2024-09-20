@@ -32,37 +32,7 @@ class Ventana(QMainWindow):
         caja7 = Caja("magenta")
         caja8 = Caja("cyan")
         caja9 = Caja("blue")
-
-        etiqueta_inidicador_encendido = QLabel()
-        etiqueta_inidicador_encendido.setStyleSheet(
-            f"""Border: 1px solid black; 
-            border-radius: 15px;
-            background-color: red;
-            """)
-        etiqueta_inidicador_encendido.setFixedSize(30, 30)
-        etiqueta_inidicador_apagado = QLabel()
-        etiqueta_inidicador_apagado.setFixedSize(30, 30)
-
-        etiqueta_encender= QPushButton("Encender")
-
-        etiqueta_apagar= QPushButton("Apagar")
-
-
-        boton_aceptar = QPushButton("Aceptar")
-        boton_cancelar = QPushButton("Cancelar")
       
-        layout_vertical1.addLayout(layout_superior)
-        layout_vertical1.addLayout(layout_inferior)
-
-        layout_superior.addWidget(etiqueta_inidicador_encendido, 0, 0)
-        layout_superior.addWidget(etiqueta_inidicador_apagado, 1, 0)
-        layout_superior.addWidget(etiqueta_encender, 0, 1, 1, 1)
-        layout_superior.addWidget(etiqueta_apagar, 1, 1, 1, 1)
-        layout_superior.addWidget(caja5, 0, 2, 2, 1)
-        layout_superior.addWidget(caja3, 2, 0, 1, 2)
-
-        layout_inferior.addWidget(boton_aceptar)
-        layout_inferior.addWidget(boton_cancelar)
 
         widget = QWidget()
         widget.setLayout(layout_vertical1)

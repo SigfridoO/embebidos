@@ -36,8 +36,8 @@ class Ventana(QMainWindow):
         self.etiqueta_inidicador_encendido = QLabel()
         self.etiqueta_inidicador_encendido.setFixedSize(30, 30)
 
-        etiqueta_inidicador_apagado = QLabel()
-        etiqueta_inidicador_apagado.setFixedSize(30, 30)
+        self.etiqueta_inidicador_apagado = QLabel()
+        self.etiqueta_inidicador_apagado.setFixedSize(30, 30)
 
         etiqueta_encender= QPushButton("Encender")
         etiqueta_apagar= QPushButton("Apagar")
@@ -49,7 +49,7 @@ class Ventana(QMainWindow):
         layout_vertical1.addLayout(layout_inferior)
 
         layout_superior.addWidget(self.etiqueta_inidicador_encendido, 0, 0)
-        layout_superior.addWidget(etiqueta_inidicador_apagado, 1, 0)
+        layout_superior.addWidget(self.etiqueta_inidicador_apagado, 1, 0)
         layout_superior.addWidget(etiqueta_encender, 0, 1, 1, 1)
         layout_superior.addWidget(etiqueta_apagar, 1, 1, 1, 1)
         layout_superior.addWidget(caja5, 0, 2, 2, 1)
@@ -65,14 +65,22 @@ class Ventana(QMainWindow):
 
         #condiciones iniciales
         self.cambiar_estado_boton(self.etiqueta_inidicador_encendido, False)
-        self.cambiar_estado_boton(etiqueta_inidicador_apagado, False)
+        self.cambiar_estado_boton(self.etiqueta_inidicador_apagado, False)
 
         #listeners
         etiqueta_encender.clicked.connect(self.cambiar_boton_encender)
         etiqueta_encender.setCheckable(True)
 
+        etiqueta_apagar.clicked.connect(self.cambiar_boton_apagar)
+        etiqueta_apagar.setCheckable(True)
+
     def cambiar_boton_encender(self, valor):
         self.cambiar_estado_boton(self.etiqueta_inidicador_encendido, valor)
+
+    def cambiar_boton_apagar(self, valor):
+        self.cambiar_estado_boton(self.etiqueta_inidicador_apagado, valor)
+
+
 
     def cambiar_estado_boton(self, boton, estado):
         color = "red"

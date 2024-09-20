@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, \
     QPushButton, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
-    QComboBox
+    QComboBox, QHBoxLayout, QVBoxLayout, QWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QPixmap
 import sys
@@ -9,23 +9,40 @@ from pathlib import Path
 def abs_path(nombre):
     return str(Path(__file__).parent.absolute() / nombre )
 
+class Caja(QLabel):
+    def __init__(self, color:str=""):
+        super().__init__()
+        self.setStyleSheet(f"Background-color:{color}")
+        
+
 class Ventana(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.combo = QComboBox()
-        self.combo.addItems( ["", "Opción 1", "Opción 2", "Opcion 3"])
-        self.combo.currentTextChanged.connect(self.cambiar_texto)
-        self.combo.currentIndexChanged.connect(self.cambiar_indice)
+        layout = QVBoxLayout()
+        layout_horizontal = QHBoxLayout()
 
-        self.setCentralWidget(self.combo)
-        self.setFixedSize(300, 150)
+        caja1 = Caja("green")
+        #caja2 = Caja("white")
+        caja3 = Caja("red")
+        caja4 = Caja("orange")
+        caja5 = Caja("white")
+        caja6 = Caja("pink")
 
-    def cambiar_texto(self, texto):
-        print(texto)
+        layout_horizontal.addWidget(caja4)
+        layout_horizontal.addWidget(caja5)
+        layout_horizontal.addWidget(caja6)
 
-    def cambiar_indice(self, indice):
-        print(type(indice), indice)
+        layout.addWidget(caja1)
+        layout.addLayout(layout_horizontal)
+        layout.addWidget(caja3)
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(0)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+        #self.setFixedSize(300, 150)
 
 
 

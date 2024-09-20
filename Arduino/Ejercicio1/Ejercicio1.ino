@@ -134,15 +134,32 @@ void imprimirTrama(byte *ptrTrama, int inicio, int tamanio) {
   }
 }
 
-void leerInstruccionDeBuffer(byte *ptrBufferLetura, int *ptrBufferIndice, byte *ptrBufferInstruccion, 
+void leerInstruccionDeBuffer(byte *ptrBufferLectura, int *ptrBufferIndice, byte *ptrBufferInstruccion, 
   int *ptrTamanioBufferInstruccion) {
     int i  = 0;
     int k = 0;
 
     int encontrado = -1;
 
-    if (ptrBufferLectura[*ptrBufferIndice] == caracterDeFin) {
+    if (ptrBufferLectura[*ptrBufferIndice-1] == caracterDeFin) {
       for (k = *ptrBufferIndice; k >= 0; --k) {
+        if (ptrBufferLectura[k] == (byte) caracterDeInicio) {
+          encontrado = k; 
+          //Serial.print(encontrado);
+          if (encontrado >= 0) {
+            *ptrTamanioBufferInstruccion = 0;
+
+            for(int j = k; j < *ptrBufferIndice; j++) {
+              ptrBufferInstruccion[*ptrTamanioBufferInstruccion] = ptrBufferLectura[j];
+              (*ptrTamanioBufferInstruccion )++;
+              
+            }
+            imprimirTrama(ptrBufferInstruccion,0, *ptrTamanioBufferInstruccion );
+            
+            *ptrBufferIndice = k;
+          }
+          
+        }
         
       }
     }

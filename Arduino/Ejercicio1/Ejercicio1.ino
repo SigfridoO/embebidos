@@ -57,12 +57,22 @@ byte bufferInstruccion[bufferIndiceMaximo];
 int bufferIndiceInstruccion = 0;
 
 void leerInstruccionDeBuffer(byte *, int *, byte *, int *);
+void obtenerInstruccion();
 
 char caracterDeInicio = '*';
 char caracterDeFin = '¡';
 
 void colocarDatosEnBuffer();
 void imprimirTrama(byte *, int , int );
+byte obtenerByteDeArregloByte(byte* );
+
+
+#define ADMINISTRACION 0
+#define SOLICITAR_VERSION 12
+#define ENVIAR_VERSION 13
+
+#define CONTROL 1
+
 
 void setup() {
 
@@ -155,7 +165,7 @@ void leerInstruccionDeBuffer(byte *ptrBufferLectura, int *ptrBufferIndice, byte 
               
             }
             imprimirTrama(ptrBufferInstruccion,0, *ptrTamanioBufferInstruccion );
-            
+            obtenerInstruccion();
             *ptrBufferIndice = k;
           }
           
@@ -165,6 +175,34 @@ void leerInstruccionDeBuffer(byte *ptrBufferLectura, int *ptrBufferIndice, byte 
     }
     
  }
+
+
+void obtenerInstruccion(){
+  int *tamanio;
+  byte *cadena;
+
+  int tipoDeInstruccion = 0;
+  int numeroDeInstruccion = 0;
+
+  tamanio = &bufferIndiceInstruccion;
+  cadena = bufferInstruccion;
+
+  tipoDeInstruccion =obtenerByteDeArregloByte(cadena + 4);
+  numeroDeInstruccion = obtenerByteDeArregloByte(cadena + 5);
+
+  Serial.print("TI: ");
+  Serial.print(tipoDeInstruccion);
+  Serial.print("NI: ");
+  Serial.print(numeroDeInstruccion);
+  
+}
+
+byte obtenerByteDeArregloByte(byte* arreglo) {
+  byte *punteroByte;
+  punteroByte = (byte *) arreglo;
+  return *punteroByte;
+}
+
 
 void actualizarSenalesDigitales() {
   X0 = digitalRead(DI0);

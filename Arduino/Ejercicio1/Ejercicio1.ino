@@ -60,7 +60,7 @@ void leerInstruccionDeBuffer(byte *, int *, byte *, int *);
 void obtenerInstruccion();
 
 char caracterDeInicio = '*';
-char caracterDeFin = '¡';
+char caracterDeFin = '?';
 
 void colocarDatosEnBuffer();
 void imprimirTrama(byte *, int , int );
@@ -194,7 +194,21 @@ void obtenerInstruccion(){
   Serial.print(tipoDeInstruccion);
   Serial.print("NI: ");
   Serial.print(numeroDeInstruccion);
-  
+  Serial.print("<<");
+
+  switch(tipoDeInstruccion){
+    case ADMINISTRACION:
+
+
+        switch(numeroDeInstruccion) {
+          case SOLICITAR_VERSION:
+            Serial.print("LA version es");
+            break;
+        }
+      break;
+    case CONTROL:
+      break;
+  }
 }
 
 byte obtenerByteDeArregloByte(byte* arreglo) {

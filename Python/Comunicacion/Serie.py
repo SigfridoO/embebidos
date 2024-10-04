@@ -18,18 +18,16 @@ def main():
 
     #cadena[0]= 62
     convertidor = Convertidor()
-    mensaje = convertidor.generar_mensaje(0, 12)
+    mensaje = convertidor.generar_mensaje(0, 11)
     print("El mensaje es: ", mensaje)
     time.sleep(1)
     if puerto_serie.is_open:
         puerto_serie.write(mensaje)
-        time.sleep(0.01)
+        #time.sleep(0.01)
         res = puerto_serie.read(20)
-        print("Respuesta >>: ", res, 
-              #int.from_bytes(res), 
-              #res.decode('utf-8'), 
-             " >> "
-              ' '.join('{0:02X}'.format(e) for e in res))
+        print("Respuesta >>: ", res) 
+            #  " >> "
+            #   ' '.join('{0:02X}'.format(e) for e in res))
     puerto_serie.close()
 
 if __name__=="__main__":

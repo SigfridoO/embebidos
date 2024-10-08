@@ -8,25 +8,35 @@ class Controlador(threading.Thread):
         self.led = False
         self.nombre = nombre
 
+        self.worker = None
+
     def run(self):
         print('Iniciando una operación superimportante')
         while True:
             print(f"LED {self.nombre}: ", self.led)
+
+            if self.worker:
+                self.worker.senal_parpadeo(self.led)
             time.sleep(1)
             self.led = True
 
             print(f"LED {self.nombre}: ", self.led)
+            if self.worker:
+                self.worker.senal_parpadeo(self.led)
+
             time.sleep(1)
             self.led = False
-            
+
+    def establecer_worker(self, worker):
+        self.worker = worker
 
 
 def main():
     controlador1 = Controlador("1")
     controlador1.start()
 
-    controlador2 = Controlador("2")
-    controlador2.start()
+    # controlador2 = Controlador("2")
+    # controlador2.start()
 
 
 if __name__=="__main__":

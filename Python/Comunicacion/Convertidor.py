@@ -2,7 +2,7 @@ from struct import pack, unpack
 
 class Convertidor:
     def __init__(self):
-        self.cadena = bytearray(20)
+        self.cadena = bytearray(25)
         self.indice = 0
 
     def generar_mensaje(self,tipo_instruccion, num_instruccion):
@@ -18,7 +18,7 @@ class Convertidor:
         self.agregar_bytes(arreglo)
 
     def agregar_caracteres(self,texto:str):
-        arreglo= texto.encode('utf-8')
+        arreglo= texto.encode('ascii')
         self.agregar_bytes(arreglo)
 
     def agregar_bytes(self, arreglo:bytes):

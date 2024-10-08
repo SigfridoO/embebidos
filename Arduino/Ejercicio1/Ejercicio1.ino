@@ -67,11 +67,11 @@ void imprimirTrama(byte *, int , int );
 byte obtenerByteDeArregloByte(byte* );
 
 
-#define ADMINISTRACION 0
-#define SOLICITAR_VERSION 12
-#define ENVIAR_VERSION 13
+#define ADMINISTRACION 48 // 0
+#define SOLICITAR_VERSION 49  //1
+#define ENVIAR_VERSION 50   //2
 
-#define CONTROL 1
+#define CONTROL 49        // 1
 
 
 void setup() {
@@ -189,22 +189,23 @@ void obtenerInstruccion(){
 
   tipoDeInstruccion =obtenerByteDeArregloByte(cadena + 4);
   numeroDeInstruccion = obtenerByteDeArregloByte(cadena + 5);
-
+  Serial.print(*tamanio);
   Serial.print("TI: ");
   Serial.print(tipoDeInstruccion);
-  Serial.print("NI: ");
+  //Serial.print(" NI: ");
   Serial.print(numeroDeInstruccion);
   Serial.print("<<");
 
   switch(tipoDeInstruccion){
     case ADMINISTRACION:
 
-
+  
         switch(numeroDeInstruccion) {
           case SOLICITAR_VERSION:
-            Serial.print("LA version es");
+            Serial.print("La version es");
             break;
         }
+        //Serial.print("LA version es");
       break;
     case CONTROL:
       break;

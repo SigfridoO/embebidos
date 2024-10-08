@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, \
     QPushButton, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
     QComboBox, QWidget, \
     QHBoxLayout, QVBoxLayout, QGridLayout
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, QRunnable, QThreadPool, pyqtSignal as Signal
 from PyQt6.QtGui import QFont, QPixmap
 import sys
 from pathlib import Path
@@ -14,7 +14,28 @@ class Caja(QLabel):
     def __init__(self, color:str=""):
         super().__init__()
         self.setStyleSheet(f"Background-color:{color}")
+
+class WorkerSignals(QObject):
+    parpadeo = Signal(bool)
+    
+    def __init__(self) -> None:
+        super().__init__()
         
+        
+
+class Worker(QRunnable):        
+    def __init__(self) -> None:
+        super().__init__()
+        self.signals:WorkerSignals = WorkerSignals()
+
+    def run(self):
+        pass
+
+    def senal_parpadeo(self, estado:bool = False):
+        try:
+            self.signals.parpadeo.emit(estado)
+        except Exception as e:
+            print(e)
 
 class Ventana(QMainWindow):
     def __init__(self):
@@ -31,7 +52,7 @@ class Ventana(QMainWindow):
         caja6 = Caja("pink")
         caja7 = Caja("magenta")
         caja8 = Caja("cyan")
-        caja9 = Caja("blue")
+        self.caja9 = Caja("blue")
 
         self.etiqueta_inidicador_encendido = QLabel()
         self.etiqueta_inidicador_encendido.setFixedSize(30, 30)
@@ -54,6 +75,7 @@ class Ventana(QMainWindow):
         layout_superior.addWidget(etiqueta_apagar, 1, 1, 1, 1)
         layout_superior.addWidget(caja5, 0, 2, 2, 1)
         layout_superior.addWidget(caja3, 2, 0, 1, 2)
+        layout_superior.addWidget(self.caja9, 2, 2, 1, 1)
 
         layout_inferior.addWidget(boton_aceptar)
         layout_inferior.addWidget(boton_cancelar)
@@ -62,6 +84,13 @@ class Ventana(QMainWindow):
         widget.setLayout(layout_vertical1)
         self.setCentralWidget(widget)
         self.setFixedSize(300, 150)
+
+        self.threadpool = QThreadPool()
+        self.worker = Worker()
+        self.worker.signals.parpadeo.connect(self.parpadear)
+
+        self.threadpool.start(self.worker)
+
 
         #condiciones iniciales
         self.cambiar_estado_boton(self.etiqueta_inidicador_encendido, False)
@@ -92,6 +121,12 @@ class Ventana(QMainWindow):
             border-radius: 15px;
             background-color: {color};
             """)
+    
+    def parpadear(self, estado: bool):
+        self.caja9.setHidden(not estado)
+
+    def obtener_worker(self):
+        return self.worker
 
 def main():
     app = QApplication(sys.argv)

@@ -1,6 +1,8 @@
 import time 
 import threading
 
+from PuertoSerie import PuertoSerie
+
 class Controlador(threading.Thread):
     def __init__(self, nombre: str=""):
         super().__init__()
@@ -11,15 +13,18 @@ class Controlador(threading.Thread):
         self.worker = None
 
         self.contador = 0
+        self.puerto_serie = PuertoSerie()
 
     def run(self):
         print('Iniciando una operación superimportante')
+        self.puerto_serie.abrir()
         while True:
             print(f"LED {self.nombre}: ", self.led)
             self.contador += 1
             if self.worker:
                 self.worker.senal_parpadeo(self.led)
-                self.worker.senal_texto_temperatura(str(self.contador))
+                valor = self.puerto_serie.enviar_mensaje()
+                self.worker.senal_texto_temperatura(valor.decode())
             time.sleep(1)
             self.led = True
 
@@ -29,6 +34,7 @@ class Controlador(threading.Thread):
 
             time.sleep(1)
             self.led = False
+        self.puerto_serie.cerrar()
 
     def establecer_worker(self, worker):
         self.worker = worker

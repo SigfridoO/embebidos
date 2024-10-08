@@ -71,8 +71,12 @@ byte obtenerByteDeArregloByte(byte* );
 #define SOLICITAR_VERSION 49  //1
 #define ENVIAR_VERSION 50   //2
 
-#define CONTROL 49        // 1
 
+#define CONTROL 49        // 1
+#define SOLICITAR_TEMPERATURA 49 //1
+#define ENVIAR_TEMPERATURA 50 //2
+
+void enviarTemperatura();
 
 void setup() {
 
@@ -164,7 +168,7 @@ void leerInstruccionDeBuffer(byte *ptrBufferLectura, int *ptrBufferIndice, byte 
               (*ptrTamanioBufferInstruccion )++;
               
             }
-            imprimirTrama(ptrBufferInstruccion,0, *ptrTamanioBufferInstruccion );
+            //imprimirTrama(ptrBufferInstruccion,0, *ptrTamanioBufferInstruccion );
             obtenerInstruccion();
             *ptrBufferIndice = k;
           }
@@ -189,27 +193,36 @@ void obtenerInstruccion(){
 
   tipoDeInstruccion =obtenerByteDeArregloByte(cadena + 4);
   numeroDeInstruccion = obtenerByteDeArregloByte(cadena + 5);
-  Serial.print(*tamanio);
-  Serial.print("TI: ");
-  Serial.print(tipoDeInstruccion);
-  //Serial.print(" NI: ");
-  Serial.print(numeroDeInstruccion);
-  Serial.print("<<");
+  //Serial.print(*tamanio);
+//  Serial.print("TI: ");
+//  Serial.print(tipoDeInstruccion);
+//  Serial.print(" NI: ");
+//  Serial.print(numeroDeInstruccion);
+//  Serial.print("<<");
 
   switch(tipoDeInstruccion){
+    
     case ADMINISTRACION:
-
-  
         switch(numeroDeInstruccion) {
           case SOLICITAR_VERSION:
-            Serial.print("La version es");
+            Serial.print("La version es 0.0.1 ESP32 Sigfrido");
             break;
         }
-        //Serial.print("LA version es");
-      break;
+        break;
+      
     case CONTROL:
+        switch(numeroDeInstruccion) {
+          case SOLICITAR_TEMPERATURA:
+            enviarTemperatura();
+            break;
+        }
       break;
   }
+}
+
+void enviarTemperatura() {
+  //Serial.print("La temperatura es: ");
+  Serial.print(VA0 /7.5);
 }
 
 byte obtenerByteDeArregloByte(byte* arreglo) {

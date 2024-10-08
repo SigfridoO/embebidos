@@ -10,13 +10,16 @@ class Controlador(threading.Thread):
 
         self.worker = None
 
+        self.contador = 0
+
     def run(self):
         print('Iniciando una operación superimportante')
         while True:
             print(f"LED {self.nombre}: ", self.led)
-
+            self.contador += 1
             if self.worker:
                 self.worker.senal_parpadeo(self.led)
+                self.worker.senal_texto_temperatura(str(self.contador))
             time.sleep(1)
             self.led = True
 

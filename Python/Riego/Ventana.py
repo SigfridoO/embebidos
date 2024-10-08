@@ -17,11 +17,10 @@ class Caja(QLabel):
 
 class WorkerSignals(QObject):
     parpadeo = Signal(bool)
+    texto_temperatura = Signal(str)
     
     def __init__(self) -> None:
         super().__init__()
-        
-        
 
 class Worker(QRunnable):        
     def __init__(self) -> None:
@@ -34,6 +33,12 @@ class Worker(QRunnable):
     def senal_parpadeo(self, estado:bool = False):
         try:
             self.signals.parpadeo.emit(estado)
+        except Exception as e:
+            print(e)
+
+    def senal_texto_temperatura(self, texto:str = ""):
+        try:
+            self.signals.texto_temperatura.emit(texto)
         except Exception as e:
             print(e)
 
@@ -53,6 +58,10 @@ class Ventana(QMainWindow):
         caja7 = Caja("magenta")
         caja8 = Caja("cyan")
         self.caja9 = Caja("blue")
+        etiqueta_temperatura = QLabel("Temperatura")
+        self.valor_temperatura = QLabel("")
+        self.valor_temperatura.setStyleSheet(f"background-color: #FFFFFF; \
+                                             border: 1px solid black")
 
         self.etiqueta_inidicador_encendido = QLabel()
         self.etiqueta_inidicador_encendido.setFixedSize(30, 30)
@@ -76,6 +85,8 @@ class Ventana(QMainWindow):
         layout_superior.addWidget(caja5, 0, 2, 2, 1)
         layout_superior.addWidget(caja3, 2, 0, 1, 2)
         layout_superior.addWidget(self.caja9, 2, 2, 1, 1)
+        layout_superior.addWidget(etiqueta_temperatura, 3, 0, 1, 2)
+        layout_superior.addWidget(self.valor_temperatura, 3, 2, 1, 1)
 
         layout_inferior.addWidget(boton_aceptar)
         layout_inferior.addWidget(boton_cancelar)
@@ -83,11 +94,12 @@ class Ventana(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout_vertical1)
         self.setCentralWidget(widget)
-        self.setFixedSize(300, 150)
+        self.setFixedSize(350, 200)
 
         self.threadpool = QThreadPool()
         self.worker = Worker()
         self.worker.signals.parpadeo.connect(self.parpadear)
+        self.worker.signals.texto_temperatura.connect(self.escribir_cuadro)
 
         self.threadpool.start(self.worker)
 
@@ -124,6 +136,9 @@ class Ventana(QMainWindow):
     
     def parpadear(self, estado: bool):
         self.caja9.setHidden(not estado)
+    
+    def escribir_cuadro(self,  texto:str):
+        self.valor_temperatura.setText(texto)
 
     def obtener_worker(self):
         return self.worker

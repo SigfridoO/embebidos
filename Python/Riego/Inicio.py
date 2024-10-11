@@ -12,6 +12,7 @@ class Inicio(Ventana):
         controlador1 = Controlador("1")
         controlador1.start()
         controlador1.establecer_worker(self.obtener_worker())
+        self.establecer_controlador(controlador1)
 
 def main():
     app = QApplication(sys.argv)

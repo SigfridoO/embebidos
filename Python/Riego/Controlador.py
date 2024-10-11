@@ -7,6 +7,8 @@ class Controlador(threading.Thread):
     def __init__(self, nombre: str=""):
         super().__init__()
         print('Dentro del constructor de controlador')
+
+        self.led_real =False
         self.led = False
         self.nombre = nombre
 
@@ -14,6 +16,9 @@ class Controlador(threading.Thread):
 
         self.contador = 0
         self.puerto_serie = PuertoSerie()
+
+    def prender_led(self):
+        print("SE PRENDERA EL LED")
 
     def run(self):
         print('Iniciando una operación superimportante')
@@ -38,6 +43,7 @@ class Controlador(threading.Thread):
 
     def establecer_worker(self, worker):
         self.worker = worker
+        
 
 
 def main():

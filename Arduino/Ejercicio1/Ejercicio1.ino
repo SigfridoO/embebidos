@@ -51,6 +51,13 @@ int Y3;
 int Y4;
 int Y5;
 
+// variables virtuales
+#define NUMERO_RC 10
+int RC[NUMERO_RC];
+
+#define NUMERO_M 10
+int M[NUMERO_M];
+
 int VA0 = 0;
 int VA1 = 0;
 int VA2 = 0;
@@ -142,13 +149,15 @@ void loop() {
   TON[1].entrada = TON[0].salida;
   actualizarTON(1);
   
-  //Y0 = TON[0].salida;
+  //Y0 = X0;
   //Y1 = !Y0;
-  Y0 = X0;
-  Y1 = X1;
-  Y2 = X2;
-  Y3 = X3;
-  Y4 = X4;
+  RC[0] = (X0||RC[0]||M[0]) && !X1;
+  Y0 = RC[0];
+  
+  //Y1 = X1;
+  //Y2 = X2;
+  //Y3 = X3;
+  //Y4 = X4;
   //Serial.println(TON[1].tiempoActual);
   
   actualizarSenalesDigitales();
@@ -250,6 +259,10 @@ void obtenerInstruccion(){
           case SOLICITAR_TEMPERATURA:
             enviarTemperatura();
             break;
+
+          case MOD_BANDERA:
+            M[0] = 1;
+           break;
         }
       break;
   }

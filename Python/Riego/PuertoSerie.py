@@ -16,9 +16,9 @@ class PuertoSerie:
     def abrir(self):
         self.puerto_serie.open()
 
-    def enviar_mensaje (self):
+    def enviar_mensaje (self, tipo, instruccion):
         convertidor = Convertidor()
-        mensaje = convertidor.generar_mensaje(49, 49)
+        mensaje = convertidor.generar_mensaje(tipo, instruccion)
         print("El mensaje es: ", mensaje)
         time.sleep(1)
         if self.puerto_serie.is_open:

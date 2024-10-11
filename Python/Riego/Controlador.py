@@ -19,6 +19,7 @@ class Controlador(threading.Thread):
 
     def prender_led(self):
         print("SE PRENDERA EL LED")
+        valor = self.puerto_serie.enviar_mensaje(49, 52)
 
     def run(self):
         print('Iniciando una operación superimportante')
@@ -28,7 +29,7 @@ class Controlador(threading.Thread):
             self.contador += 1
             if self.worker:
                 self.worker.senal_parpadeo(self.led)
-                valor = self.puerto_serie.enviar_mensaje()
+                valor = self.puerto_serie.enviar_mensaje(49, 49)
                 self.worker.senal_texto_temperatura(valor.decode())
             time.sleep(1)
             self.led = True

@@ -19,20 +19,41 @@ void actualizarTON (int);
 // Digitales
 int DI0 = 36;
 int DI1 = 39;
+int DI2 = 34;
+int DI3 = 35;
+int DI4 = 13;
+
 
 int DO0 = 26;
-int DO1 = 14;
+int DO1 = 27;
+int DO2 = 14;
+int DO3 = 12;
+int DO4 = 9;
+int DO5 = 2;
+
 
 // Analogicas
 int AI0 = 32;
+int AI1 = 33;
+int AI2 = 25;
 
 //Variables
 int X0;
+int X1;
+int X2;
+int X3;
+int X4;
 
 int Y0;
 int Y1;
+int Y2;
+int Y3;
+int Y4;
+int Y5;
 
 int VA0 = 0;
+int VA1 = 0;
+int VA2 = 0;
 
 void actualizarSenalesDigitales();
 void leerSenalesAnalog();
@@ -75,6 +96,8 @@ byte obtenerByteDeArregloByte(byte* );
 #define CONTROL 49        // 1
 #define SOLICITAR_TEMPERATURA 49 //1
 #define ENVIAR_TEMPERATURA 50 //2
+#define MOD_BANDERA 52 //4
+
 
 void enviarTemperatura();
 
@@ -84,9 +107,16 @@ void setup() {
   
   pinMode(DI0, INPUT);
   pinMode(DI1, INPUT);
+  pinMode(DI2, INPUT);
+  pinMode(DI3, INPUT);
+  pinMode(DI4, INPUT);
 
   pinMode(DO0, OUTPUT);
   pinMode(DO1, OUTPUT);
+  pinMode(DO2, OUTPUT);
+  pinMode(DO3, OUTPUT);
+//  pinMode(DO4, OUTPUT);
+//  pinMode(DO5, OUTPUT);
 
   // Configuracion del puerto serie
   Serial.begin(9600);
@@ -112,8 +142,13 @@ void loop() {
   TON[1].entrada = TON[0].salida;
   actualizarTON(1);
   
-  Y0 = TON[0].salida;
-  Y1 = !Y0;
+  //Y0 = TON[0].salida;
+  //Y1 = !Y0;
+  Y0 = X0;
+  Y1 = X1;
+  Y2 = X2;
+  Y3 = X3;
+  Y4 = X4;
   //Serial.println(TON[1].tiempoActual);
   
   actualizarSenalesDigitales();
@@ -234,9 +269,17 @@ byte obtenerByteDeArregloByte(byte* arreglo) {
 
 void actualizarSenalesDigitales() {
   X0 = digitalRead(DI0);
+  X1 = digitalRead(DI1);
+  X2 = digitalRead(DI2);
+  X3 = digitalRead(DI3);
+  X4 = digitalRead(DI4);
   
   digitalWrite(DO0, Y0);
   digitalWrite(DO1, Y1);
+  digitalWrite(DO2, Y2);
+  digitalWrite(DO3, Y3);
+  digitalWrite(DO4, Y4);
+  digitalWrite(DO5, Y5);
 }
 
 void leerSenalesAnalog() {

@@ -4,12 +4,14 @@ class Convertidor:
     def __init__(self):
         self.cadena = bytearray(25)
         self.indice = 0
+        self.comprobacion = 0
 
     def generar_mensaje(self,tipo_instruccion, num_instruccion):
         self.agregar_caracteres("*RIE")
         self.agregar_entero1(tipo_instruccion)
         self.agregar_entero1(num_instruccion)
-
+        self.agregar_entero1(self.indice)
+        self.agregar_entero1(self.comprobacion)
         self.agregar_caracteres("?")
         return self.cadena[0:self.indice]
     
@@ -25,6 +27,7 @@ class Convertidor:
         for i, elemento in enumerate(arreglo):
             self.cadena[self.indice] = arreglo[i]
             self.indice =self.indice +1
+            self.comprobacion ^= arreglo[i]
 
 def main():
     convertidor = Convertidor()

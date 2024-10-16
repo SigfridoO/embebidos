@@ -1,0 +1,11 @@
+html {
+    background-color: #c59aa1;
+}
+h1 {
+    text-align: center;
+    font-size: 3rem;
+}
+.texto-especial {
+    color: white;
+    font-weight: 900;
+}

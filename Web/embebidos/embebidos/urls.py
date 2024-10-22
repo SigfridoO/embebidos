@@ -17,7 +17,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from core import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('', views.home, name='home'),
+    
+    path('cocos/', views.cocos, name='cocos'),
+    path('empaquetadora/', views.empaquetadora, name='empaquetadora'),
+    path('domotica/', views.domotica, name='domotica'),
+    path('hidroponia/', views.hidroponia, name='hidroponia'),
+    path('mapa/', views.mapa, name='mapa'),
 ]

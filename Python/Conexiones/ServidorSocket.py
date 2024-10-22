@@ -2,8 +2,8 @@ import socket
 
 
 class ServidorSocket:
-    DIRECCION = "192.168.0.100"
-    PUERTO = 65433
+    DIRECCION = "192.168.0.115"
+    PUERTO = 65440
 
     def __init__(self):
         print("Dentro del servidor")
@@ -16,7 +16,7 @@ class ServidorSocket:
         print(f"Aceptando conexión de : {cliente_direccion[0]}:{cliente_direccion[1]}")
 
         while True:
-            request = cliente_socket.recv(1024)
+            request = cliente_socket.recv(20)
             request = request.decode("utf-8")
 
             if request.lower() == "cerrar":
@@ -26,6 +26,9 @@ class ServidorSocket:
             print(f"recibido: {request}")
             response = "aceptada".encode("utf-8")
             cliente_socket.send(response)
+
+            texto = input("Escribe algo")
+            cliente_socket.send(texto.encode("utf-8"))
 
         cliente_socket.close()
         print("Conexión cerrada")

@@ -10,14 +10,20 @@ class ServidorSocket:
         self.servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.servidor.bind((self.DIRECCION, self.PUERTO))
         self.servidor.listen(0)
-        self.iniciar_conexiones()
 
+        self.cliente_socket = None
+        self.iniciar_conexiones()
+        
+    def simulador_datos(self):
+        contador = 0
+        while True:
+            if self.cliente_socket and self.cliente_socket.
     def iniciar_conexiones(self):
         print(f"Escuchando en la dirección {self.DIRECCION} : {self.PUERTO}")
 
         while True:
-            cliente_socket, cliente_direccion = self.servidor.accept()
-            tarea = threading.Thread(target=self.manejar_conexion, args=(cliente_socket, cliente_direccion))
+            self.cliente_socket, cliente_direccion = self.servidor.accept()
+            tarea = threading.Thread(target=self.manejar_conexion, args=(self.cliente_socket, cliente_direccion))
             tarea.start()
 
     def manejar_conexion(self, cliente_socket, cliente_direccion):

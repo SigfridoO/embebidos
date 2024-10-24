@@ -2,8 +2,8 @@ import socket
 
 
 class ClienteSocket:
-    DIRECCION = "192.168.0.100"
-    PUERTO = 65432
+    DIRECCION = "192.168.0.115"
+    PUERTO = 65440
 
     def __init__(self):
         print("Dentro del cliente")

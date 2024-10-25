@@ -2,11 +2,15 @@ import socket
 
 
 class ClienteSocket:
-    DIRECCION = "192.168.0.115"
-    PUERTO = 65440
+    DIRECCION = "192.168.0.216"
+    PUERTO = 8000
 
-    def __init__(self):
+    def __init__(self, direccion=None, puerto=None):
         print("Dentro del cliente")
+
+        if direccion and puerto:
+            self.DIRECCION = direccion
+            self.PUERTO = puerto
         cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         cliente.connect((self.DIRECCION, self.PUERTO))
         

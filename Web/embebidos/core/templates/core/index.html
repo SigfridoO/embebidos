@@ -3,28 +3,57 @@
 
 {% block titulo %} Homepage {% endblock %}
 
-{% block content %} 
+{% block content %}
 <h1>Bienvenido</h1>
+
+
 
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="{% static 'core/images/pokemon1.png'%}" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'core/images/pokemon2.jpg'%}" class="d-block w-100" alt="...">
-      </div>
+        <div class="carousel-item active">
+            <img src="{% static 'core/images/pokemon1.png'%}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'core/images/pokemon2.jpg'%}" class="d-block w-100" alt="...">
+        </div>
 
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
     </button>
     <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
     </button>
-  </div>
+</div>
 
+<section class="proceso mt-5">
 
+    <div class="container">
+        <h2>Llenado</h2>
+        <div class="row">
+
+            {% for memoria in memorias %}
+                
+            <div class="col-md-4 col-sm-6">
+                <div class="card">
+                    <img src="{{memoria.imagen.url}}" alt="{{imagen.nombre}}" />
+                    <div class="card-meta bg-primary p-2 text-white text-center">
+                        <p>{{memoria.nombre}}</p>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{memoria.titulo}}</h3>
+                        <p class="card-subtitle">
+                            {{memoria.subtitulo}}
+                        </p>
+                        <p>{{memoria.resumen}}</p>
+                        <a href="#">Mas información</a>
+                    </div>
+                </div> <!-- card -->
+            </div> <!-- md-4-->
+            {% endfor %}
+        </div> <!-- row-->
+    </div>
+</section>
 {%endblock%}

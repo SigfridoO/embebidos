@@ -1,7 +1,9 @@
 from django.shortcuts import render
+from .models import Memoria
 
 def home(request):
-    return render(request, "core/index.html")
+    memorias = Memoria.objects.all()
+    return render(request, "core/index.html", {'memorias': memorias})
 
 def cocos(request):
     return render(request, "core/cocos.html")

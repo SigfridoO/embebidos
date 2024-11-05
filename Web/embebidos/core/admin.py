@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Memoria
+
+class MemoriaAdmin(admin.ModelAdmin):
+    readonly_fields = ('creado', 'actualizado')
+
+admin.site.register(Memoria, MemoriaAdmin)

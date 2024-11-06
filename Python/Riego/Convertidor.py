@@ -6,10 +6,16 @@ class Convertidor:
         self.indice = 0
         self.comprobacion = 0
 
-    def generar_mensaje(self,tipo_instruccion, num_instruccion):
+    def generar_mensaje(self,tipo_instruccion, num_instruccion, args = []):
+        print("los argumentos son: ", args)
+        self.indice = 0
+        self.comprobacion = 0
         self.agregar_caracteres("*RIE")
         self.agregar_entero1(tipo_instruccion)
         self.agregar_entero1(num_instruccion)
+
+
+
         self.agregar_entero1(self.indice)
         self.agregar_entero1(self.comprobacion)
         self.agregar_caracteres("?")

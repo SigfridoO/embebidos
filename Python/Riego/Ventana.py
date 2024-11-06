@@ -76,6 +76,7 @@ class Ventana(QMainWindow):
         boton_cancelar = QPushButton("Cancelar")
 
         self.boton_led = QPushButton("LED")
+        self.boton_led.setCheckable(True)
       
         layout_vertical1.addLayout(layout_superior)
         layout_vertical1.addLayout(layout_inferior)
@@ -126,11 +127,11 @@ class Ventana(QMainWindow):
     def cambiar_boton_apagar(self, valor):
         self.cambiar_estado_boton(self.etiqueta_inidicador_apagado, valor)
 
-    def prender_led(self):
+    def prender_led(self, estado):
         print("Encendiendo el led")
 
         if self.mi_controlador:
-            self.mi_controlador.prender_led()
+            self.mi_controlador.prender_led(estado)
 
 
     def cambiar_estado_boton(self, boton, estado):

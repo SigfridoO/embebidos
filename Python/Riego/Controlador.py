@@ -2,6 +2,13 @@ import time
 import threading
 
 from PuertoSerie import PuertoSerie
+from Convertidor import Convertidor
+
+ADMINISTRACION = '0'
+
+
+CONTROL = 49
+MOD_BANDERA = 52
 
 class Controlador(threading.Thread):
     def __init__(self, nombre: str=""):
@@ -15,11 +22,16 @@ class Controlador(threading.Thread):
         self.worker = None
 
         self.contador = 0
+        self.convertidor = Convertidor()
         self.puerto_serie = PuertoSerie()
 
-    def prender_led(self):
+    def prender_led(self, estado):
         print("SE PRENDERA EL LED")
-        valor = self.puerto_serie.enviar_mensaje(49, 52)
+        
+        mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [0, 1])
+        print(f"El mensaje a enviar es: {mensaje}")
+
+        #valor = self.puerto_serie.enviar_mensaje(mensaje)
 
     def run(self):
         print('Iniciando una operación superimportante')
@@ -29,8 +41,8 @@ class Controlador(threading.Thread):
             self.contador += 1
             if self.worker:
                 self.worker.senal_parpadeo(self.led)
-                valor = self.puerto_serie.enviar_mensaje(49, 49)
-                self.worker.senal_texto_temperatura(valor.decode())
+                # valor = self.puerto_serie.enviar_mensaje(49, 49)
+                # self.worker.senal_texto_temperatura(valor.decode())
             time.sleep(1)
             self.led = True
 

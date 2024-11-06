@@ -149,7 +149,7 @@ void loop() {
   TON[1].entrada = TON[0].salida;
   actualizarTON(1);
   
-  //Y0 = X0;
+  Y4 = TON[0].salida;
   //Y1 = !Y0;
   RC[0] = (X0||RC[0]||M[0]) && !X1 & !M[1];
   Y0 = RC[0];

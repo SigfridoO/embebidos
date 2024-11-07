@@ -16,9 +16,11 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from core import views
 from django.conf import settings
+
+from app.front.urls import urlpatterns_chat
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,6 +31,8 @@ urlpatterns = [
     path('domotica/', views.domotica, name='domotica'),
     path('hidroponia/', views.hidroponia, name='hidroponia'),
     path('mapa/', views.mapa, name='mapa'),
+
+    path('chat/', include(urlpatterns_chat)),
 ]
 
 if settings.DEBUG:

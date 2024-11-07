@@ -28,10 +28,9 @@ class Controlador(threading.Thread):
     def prender_led(self, estado):
         print("SE PRENDERA EL LED")
         
-        mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [0, 1])
-        print(f"El mensaje a enviar es: {mensaje}")
-
-        #valor = self.puerto_serie.enviar_mensaje(mensaje)
+        mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [0, estado])
+        print(f"El mensaje a enviar es: {mensaje}  ", ' '.join('{0:02X}'.format(e) for e in mensaje))
+        valor = self.puerto_serie.enviar_mensaje(mensaje)
 
     def run(self):
         print('Iniciando una operación superimportante')

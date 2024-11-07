@@ -13,8 +13,9 @@ class Convertidor:
         self.agregar_caracteres("*RIE")
         self.agregar_entero1(tipo_instruccion)
         self.agregar_entero1(num_instruccion)
-
-
+        if args and isinstance(args, list):
+            for item in args:
+                self.agregar_entero1(item)
 
         self.agregar_entero1(self.indice)
         self.agregar_entero1(self.comprobacion)

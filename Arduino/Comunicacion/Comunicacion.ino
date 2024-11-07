@@ -267,8 +267,8 @@ void obtenerInstruccion(){
             break;
 
           case MOD_BANDERA:
-            indice =obtenerByteDeArregloByte(cadena + 6) -'0';
-            valor = obtenerByteDeArregloByte(cadena + 7) -'0';
+            indice =obtenerByteDeArregloByte(cadena + 6) ;
+            valor = obtenerByteDeArregloByte(cadena + 7) ;
 
             M[indice] = valor;
            break;

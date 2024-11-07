@@ -1,3 +1,6 @@
+// EEPROM
+#include <EEPROM.h>
+
 
 // Temporizadores
 
@@ -62,6 +65,11 @@ int VA0 = 0;
 int VA1 = 0;
 int VA2 = 0;
 
+#define numeroAnalog 3
+float m[numeroAnalog];
+float b[numeroAnalog];
+
+
 void actualizarSenalesDigitales();
 void leerSenalesAnalog();
 
@@ -108,6 +116,12 @@ byte obtenerByteDeArregloByte(byte* );
 
 void enviarTemperatura();
 
+// Memoria EEPROM
+#define TAMANIO_MEMORIA_EEPROM 512
+#define EEPROM_ANALOG 0 
+
+void escribirVariablesAnalogicasEnEEPROM (int, float, float);
+int obtenertDireccionMemoriaEEPROM(int);
 void setup() {
 
   // Puerto Serie
@@ -127,6 +141,8 @@ void setup() {
 
   // Configuracion del puerto serie
   Serial.begin(115200);
+  EEPROM.begin(TAMANIO_MEMORIA_EEPROM);
+  escribirVariablesAnalogicasEnEEPROM(0, 1, 3); // (indice, m, b)
 
   // Temporizadores
   TON[0].tiempo = (unsigned long) 1000;
@@ -330,4 +346,19 @@ void actualizarTON (int i) {
         TON_Aux[i].bandera = false;
     }
 
+}
+
+// EEPROM
+void escribirVariablesAnalogicasEnEEPROM (int indice, float m, float b) {
+  
+}
+
+int obtenertDireccionMemoriaEEPROM(int opcion) {
+  int direccionInicial = 0;
+  switch(opcion) {
+    case EEPROM_ANALOG:
+      direccionInicial = 0;    
+      break;
+  }
+  return direccionInicial;
 }

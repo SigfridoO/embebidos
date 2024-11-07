@@ -17,8 +17,7 @@ class PuertoSerie:
         self.puerto_serie.open()
 
     def enviar_mensaje (self, mensaje):
-        #convertidor = Convertidor()
-        # time.sleep(1)
+        res = None
         if self.puerto_serie.is_open:
             self.puerto_serie.write(mensaje)
             time.sleep(0.01)

@@ -3,9 +3,11 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, \
     QComboBox, QWidget, \
     QHBoxLayout, QVBoxLayout, QGridLayout
 from PyQt6.QtCore import Qt, QObject, QRunnable, QThreadPool, pyqtSignal as Signal
-from PyQt6.QtGui import QFont, QPixmap
+from PyQt6.QtGui import QFont, QPixmap, QCloseEvent
 import sys
 from pathlib import Path
+
+from Controlador import Controlador
 
 def abs_path(nombre):
     return str(Path(__file__).parent.absolute() / nombre )
@@ -156,6 +158,11 @@ class Ventana(QMainWindow):
     
     def establecer_controlador(self, controlador):
         self.mi_controlador = controlador
+
+    def closeEvent(self, event:QCloseEvent):
+        print("SE presiono el boton cerrar")
+        if self.mi_controlador:
+            self.mi_controlador.detener()
 
 def main():
     app = QApplication(sys.argv)

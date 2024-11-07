@@ -8,11 +8,10 @@ class Inicio(Ventana):
     def __init__(self):
         super().__init__()
 
-        
-        controlador1 = Controlador("1")
-        controlador1.start()
-        controlador1.establecer_worker(self.obtener_worker())
-        self.establecer_controlador(controlador1)
+        self.controlador1 = Controlador("1")
+        # self.controlador1.start()
+        self.controlador1.establecer_worker(self.obtener_worker())
+        self.establecer_controlador(self.controlador1)
 
 def main():
     app = QApplication(sys.argv)

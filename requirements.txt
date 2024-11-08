@@ -9,6 +9,8 @@ pyserial
 
 # Para servidor
 Django>=5.1.2
+channels==3.0.5
+#channels_redis==4.0.0
 requests
 Pillow
 

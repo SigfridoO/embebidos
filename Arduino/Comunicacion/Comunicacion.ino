@@ -121,7 +121,11 @@ void enviarTemperatura();
 #define EEPROM_ANALOG 0 
 
 void escribirVariablesAnalogicasEnEEPROM (int, float, float);
-int obtenertDireccionMemoriaEEPROM(int);
+void leerVariablesAnalogicasEnEEPROM (int);
+
+int obtenerDireccionMemoriaEEPROM(int);
+
+
 void setup() {
 
   // Puerto Serie
@@ -142,7 +146,8 @@ void setup() {
   // Configuracion del puerto serie
   Serial.begin(115200);
   EEPROM.begin(TAMANIO_MEMORIA_EEPROM);
-  escribirVariablesAnalogicasEnEEPROM(0, 1, 3); // (indice, m, b)
+  escribirVariablesAnalogicasEnEEPROM(2, 34.5, -3.45); // (indice, m, b)
+  leerVariablesAnalogicasEnEEPROM (2);
 
   // Temporizadores
   TON[0].tiempo = (unsigned long) 1000;
@@ -350,10 +355,57 @@ void actualizarTON (int i) {
 
 // EEPROM
 void escribirVariablesAnalogicasEnEEPROM (int indice, float m, float b) {
+  int direccion1 = 2 * indice * sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
+  int direccion2 = (2 * indice + 1 )* sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
+
+  Serial.print("Imprimiendo VA ");
+  Serial.print(indice);
+  Serial.print(" ");
+  Serial.print(direccion1);
+  Serial.print(" ");
+  Serial.print(m);
+  Serial.print("\t\t");
+  Serial.print(direccion2);
+  Serial.print(" ");
+  Serial.print(b);
+  Serial.print("\n");
+
+  EEPROM.writeFloat(direccion1, m);
+  EEPROM.writeFloat(direccion2, b);
+
+  EEPROM.commit();
   
 }
 
-int obtenertDireccionMemoriaEEPROM(int opcion) {
+
+void leerVariablesAnalogicasEnEEPROM (int indice) {
+  float m = 0;
+  float b = 0;
+
+  
+  int direccion1 =  2 * indice * sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
+  int direccion2 = (2 * indice + 1 )* sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
+
+   m = EEPROM.readFloat(direccion1);
+   b = EEPROM.readFloat(direccion2);
+
+
+  Serial.print("Leyendo VA-");
+  Serial.print(indice);
+  Serial.print(" ");
+  Serial.print(direccion1);
+  Serial.print(" ");
+  Serial.print(m);
+  Serial.print("\t\t");
+  Serial.print(direccion2);
+  Serial.print(" ");
+  Serial.print(b);
+  Serial.print("\n");
+ 
+}
+
+
+int obtenerDireccionMemoriaEEPROM(int opcion) {
   int direccionInicial = 0;
   switch(opcion) {
     case EEPROM_ANALOG:

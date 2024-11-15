@@ -113,6 +113,12 @@ byte obtenerByteDeArregloByte(byte* );
 #define ENVIAR_TEMPERATURA 50 //2
 #define MOD_BANDERA 52 //4
 
+#define CONFIGURAR_ANALOG 53          // 5
+#define CONFIGURADO_ANALOG 54         // 6
+ 
+#define CONFIGURAR_TEMPORIZADOR 55    // 7
+#define CONFIGURADO_TEMPORIZADOR 56   // 8
+
 
 void enviarTemperatura();
 
@@ -293,6 +299,13 @@ void obtenerInstruccion(){
 
             M[indice] = valor;
            break;
+
+          case CONFIGURAR_ANALOG:
+             indice =obtenerByteDeArregloByte(cadena + 6) ;
+             m =obtenerFloatDeArregloByte(cadena + 7) ;
+             b =obtenerFloatDeArregloByte(cadena + 11) ;
+          
+            break;
         }
       break;
   }
@@ -358,7 +371,7 @@ void escribirVariablesAnalogicasEnEEPROM (int indice, float m, float b) {
   int direccion1 = 2 * indice * sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
   int direccion2 = (2 * indice + 1 )* sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
 
-  Serial.print("Imprimiendo VA ");
+  Serial.print("Guardando VA-");
   Serial.print(indice);
   Serial.print(" ");
   Serial.print(direccion1);

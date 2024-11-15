@@ -36,7 +36,7 @@
 
         const SALA_CHAT = 'python';
         // Conecta con WebSockets
-        const CHAT_SOCKET = new WebSocket('ws://192.168.0.11:8000/ws/chat/' + SALA_CHAT + '/');
+        const CHAT_SOCKET = new WebSocket('ws://192.168.0.115:8000/ws/chat/' + SALA_CHAT + '/');
 
 
         const botonEnviar = document.querySelector('#enviar');
@@ -62,7 +62,7 @@
             const MI_CONTENEDOR = document.createElement('div');
             MI_CONTENEDOR.classList.add(propio ? 'bg-primary' : 'bg-secondary', 'p-2');
             // Nombre
-            const MI_NOMBRE = document.createElement('h2');
+            const MI_NOMBRE = document.createElement('h2')
             MI_NOMBRE.classList.add('text-tiny', 'text-bold', 'mt-2');
             MI_NOMBRE.textContent = nombre;
             MI_CONTENEDOR.appendChild(MI_NOMBRE);

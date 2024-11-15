@@ -31,9 +31,9 @@ class Controlador:
     def prender_led(self, estado):
         print("SE PRENDERA EL LED")
         if estado:
-            mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [0, 1])
+            mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [60, 1])
         else:
-            mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [1, 1])
+            mensaje = self.convertidor.generar_mensaje(CONTROL, MOD_BANDERA, [61, 1])
         print(f"El mensaje a enviar es: {mensaje}  ", ' '.join('{0:02X}'.format(e) for e in mensaje))
         valor = self.puerto_serie.enviar_mensaje(mensaje)
 

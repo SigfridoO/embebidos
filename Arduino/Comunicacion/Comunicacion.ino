@@ -4,7 +4,7 @@
 
 // Temporizadores
 
-#define  numeroDeTON 16
+#define  numeroDeTON 32
 struct temporizador {
     byte entrada;
     byte salida;
@@ -55,10 +55,10 @@ int Y4;
 int Y5;
 
 // variables virtuales
-#define NUMERO_RC 10
+#define NUMERO_RC 80
 int RC[NUMERO_RC];
 
-#define NUMERO_M 10
+#define NUMERO_M 80
 int M[NUMERO_M];
 
 int VA0 = 0;
@@ -126,6 +126,38 @@ void leerVariablesAnalogicasEnEEPROM (int);
 int obtenerDireccionMemoriaEEPROM(int);
 
 
+// Serial1
+#define TXD1 21
+#define RXD1 19
+
+HardwareSerial mySerial(1);
+
+// Comunicación WIFI
+#include <WiFi.h>
+#include <WiFiClient.h>
+
+//const char* ssid="ardilluda2";
+const char* ssid="ardilluda";
+const char* password = "01971101";
+
+const char* server_ip = "192.168.0.115";
+const int server_port = 65440;
+
+WiFiClient cliente;
+
+enum EstadoWifi {
+  SIN_CONEXION = 0,
+  CONECTANDO = 1,
+  CONEXION_ESTABLECIDA = 2,
+  CLIENTE_DESCONECTADO = 3,
+  CLIENTE_COMUNICADO = 4
+};
+EstadoWifi estadoConexionWifi = SIN_CONEXION;
+
+void controlWifi(void *);
+
+// Comunicacion Bluetooth
+
 void setup() {
 
   // Puerto Serie
@@ -145,6 +177,10 @@ void setup() {
 
   // Configuracion del puerto serie
   Serial.begin(115200);
+
+  mySerial.begin(115200, SERIAL_8N1, RXD1, TXD1);
+
+  
   EEPROM.begin(TAMANIO_MEMORIA_EEPROM);
   escribirVariablesAnalogicasEnEEPROM(2, 34.5, -3.45); // (indice, m, b)
   leerVariablesAnalogicasEnEEPROM (2);
@@ -152,7 +188,16 @@ void setup() {
   // Temporizadores
   TON[0].tiempo = (unsigned long) 1000;
   TON[1].tiempo = (unsigned long) 500;
+
+
+
+  TON[24].tiempo = (unsigned long) 1000; // Temporizador para Wifi
+  // Tarea para el manejo de la comunicación WIFI
+  xTaskCreatePinnedToCore(controlWifi, "ControlWifi", 8192, NULL, 1, NULL, 0);
 }
+
+
+
 
 void loop() {
 
@@ -413,4 +458,103 @@ int obtenerDireccionMemoriaEEPROM(int opcion) {
       break;
   }
   return direccionInicial;
+}
+
+// -------------------- Wifi
+void controlWifi(void *pvParametros) {
+    
+  EstadoWifi estadoActual;
+  while(true) {
+
+    // Manejo de la conexión wifi
+    RC[60] = (M[60] || RC[60]) && !M[61];
+
+    // Manejo de la conexión con el servidor socket
+    RC[61] = RC[60] & (M[62] || RC[61]) && !M[63];
+
+
+    M[60] = 0;
+    M[61] = 0;
+
+    M[62] = 0;
+    M[63] = 0;
+
+    // Temporizador
+    TON[24].entrada = !TON[24].salida;
+    actualizarTON(24);
+    
+    if (TON[24].salida) {
+  
+      mySerial.print("Estado conexion: ");
+      mySerial.print(estadoConexionWifi);
+
+      mySerial.print(" RC[60]: ");
+      mySerial.print(RC[60]);
+
+      mySerial.println();
+      
+      estadoActual = estadoConexionWifi;
+      
+      switch(estadoActual) {
+        case SIN_CONEXION:
+          if (RC[60]) {
+            estadoConexionWifi = CONECTANDO;
+            mySerial.println("Conectando a la red");
+            WiFi.begin(ssid, password);
+            //estadoConexionWifi = RC[60] ? CONECTANDO : SIN_CONEXION;
+          }
+          break;
+
+        case CONECTANDO:
+
+          if (RC[60]) {
+             if (WiFi.status() != WL_CONNECTED){
+              mySerial.print(".");
+            } else {
+              estadoConexionWifi = CONEXION_ESTABLECIDA;
+              mySerial.println("");
+              mySerial.println("Conexion establecida");
+              mySerial.println("Dirección IP");
+              mySerial.println(WiFi.localIP());
+            }
+          } else {
+            estadoConexionWifi = SIN_CONEXION;
+            WiFi.disconnect();
+          }
+          break;
+        
+        case CONEXION_ESTABLECIDA:
+
+          if (RC[60]) {
+            if (RC[61]) {
+                if (!cliente.connected()){
+                    Serial.print("Conexión perdidad, reconectando");
+                    cliente.connect(server_ip, server_port);
+                } else {
+                    estadoConexionWifi = CLIENTE_COMUNICADO;
+                }
+            } 
+            
+          } else {
+            estadoConexionWifi = SIN_CONEXION;
+            WiFi.disconnect();
+          }
+          break;
+        
+        
+        case CLIENTE_DESCONECTADO:
+        
+          break;
+        
+        case CLIENTE_COMUNICADO:
+          break;
+        
+
+      }
+    
+    } // fin del if
+      
+  delay(1);
+  }
+  
 }

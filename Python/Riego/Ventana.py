@@ -98,6 +98,24 @@ class Ventana(QMainWindow):
         self.boton_activar_websocket.setCheckable(True)
 
 
+        layout_temp = QGridLayout()
+        widget_aux = QWidget()
+        widget_aux.setLayout(layout_temp)
+        etiqueta_m = QLabel("m")
+        self.txt_m = QLineEdit()
+
+        etiqueta_b = QLabel("b")
+        self.txt_b = QLineEdit()
+
+        self.boton_analog_conf = QPushButton("Enviar")
+        layout_temp.addWidget(etiqueta_m, 0,0)
+        layout_temp.addWidget(self.txt_m, 0,1)
+        layout_temp.addWidget(etiqueta_b, 0,2)
+        layout_temp.addWidget(self.txt_b, 0,3)
+        layout_temp.addWidget(self.boton_analog_conf, 0,4)
+
+
+
         layout_vertical1.addLayout(layout_superior)
         layout_vertical1.addLayout(layout_inferior)
 
@@ -113,6 +131,7 @@ class Ventana(QMainWindow):
         layout_superior.addWidget(self.boton_activar_websocket, 5, 0, 1, 2)
         layout_superior.addWidget(etiqueta_temperatura, 6, 0, 1, 2)
         layout_superior.addWidget(self.valor_temperatura, 6, 2, 1, 1)
+        layout_superior.addWidget(widget_aux, 7, 0, 1, 3)
 
         layout_inferior.addWidget(boton_aceptar)
         layout_inferior.addWidget(boton_cancelar)
@@ -120,7 +139,7 @@ class Ventana(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout_vertical1)
         self.setCentralWidget(widget)
-        self.setFixedSize(350, 300)
+        self.resize(350, 320)
 
         self.threadpool = QThreadPool()
         self.worker = Worker()

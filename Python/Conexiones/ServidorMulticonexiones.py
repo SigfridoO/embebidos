@@ -2,7 +2,7 @@ import socket
 import threading
 
 class ServidorSocket:
-    DIRECCION = "192.168.0.11"
+    DIRECCION = "192.168.0.115"
     PUERTO = 65440
 
     def __init__(self):

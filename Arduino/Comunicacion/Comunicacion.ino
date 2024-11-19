@@ -141,14 +141,14 @@ HardwareSerial mySerial(1);
 // Comunicación WIFI
 #include <WiFi.h>
 
-//const char* ssid="ardilluda2";
-const char* ssid="ardilluda";
+const char* ssid="ardilluda2";
+//const char* ssid="ardilluda";
 const char* password = "01971101";
 
 // Comunicación Socket
 #include <WiFiClient.h>
 
-const char* server_ip = "192.168.0.11";
+const char* server_ip = "192.168.0.115";
 const int server_port = 65440;
 
 WiFiClient socketClient;

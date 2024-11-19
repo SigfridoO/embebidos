@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, \
     QPushButton, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
-    QComboBox, QWidget, \
+    QComboBox, QWidget, QMessageBox,  \
     QHBoxLayout, QVBoxLayout, QGridLayout
 from PyQt6.QtCore import Qt, QObject, QRunnable, QThreadPool, pyqtSignal as Signal
 from PyQt6.QtGui import QFont, QPixmap, QCloseEvent
@@ -16,6 +16,14 @@ class Caja(QLabel):
     def __init__(self, color:str=""):
         super().__init__()
         self.setStyleSheet(f"Background-color:{color}")
+
+class BotonConSenal(QPushButton):
+    def __init__(self, nombre, indice_encendido, indice_apagado):
+        super().__init__()
+        self.setText(nombre)
+        self.indice_encendido = indice_encendido
+        self.indice_apagado = indice_apagado
+    
 
 class WorkerSignals(QObject):
     parpadeo = Signal(bool)
@@ -79,7 +87,17 @@ class Ventana(QMainWindow):
 
         self.boton_led = QPushButton("LED")
         self.boton_led.setCheckable(True)
-      
+
+        self.boton_activar_wifi = BotonConSenal("Activar Wifi", 60, 61)
+        self.boton_activar_wifi.setCheckable(True)
+
+        self.boton_activar_socket = BotonConSenal("Activar Socket", 62, 63)
+        self.boton_activar_socket.setCheckable(True)
+
+        self.boton_activar_websocket = BotonConSenal("Activar Websocket", 64, 65)
+        self.boton_activar_websocket.setCheckable(True)
+
+
         layout_vertical1.addLayout(layout_superior)
         layout_vertical1.addLayout(layout_inferior)
 
@@ -90,8 +108,11 @@ class Ventana(QMainWindow):
         layout_superior.addWidget(caja5, 0, 2, 2, 1)
         layout_superior.addWidget(self.boton_led, 2, 0, 1, 2)
         layout_superior.addWidget(self.caja9, 2, 2, 1, 1)
-        layout_superior.addWidget(etiqueta_temperatura, 3, 0, 1, 2)
-        layout_superior.addWidget(self.valor_temperatura, 3, 2, 1, 1)
+        layout_superior.addWidget(self.boton_activar_wifi, 3, 0, 1, 2)
+        layout_superior.addWidget(self.boton_activar_socket, 4, 0, 1, 2)
+        layout_superior.addWidget(self.boton_activar_websocket, 5, 0, 1, 2)
+        layout_superior.addWidget(etiqueta_temperatura, 6, 0, 1, 2)
+        layout_superior.addWidget(self.valor_temperatura, 6, 2, 1, 1)
 
         layout_inferior.addWidget(boton_aceptar)
         layout_inferior.addWidget(boton_cancelar)
@@ -99,7 +120,7 @@ class Ventana(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout_vertical1)
         self.setCentralWidget(widget)
-        self.setFixedSize(350, 200)
+        self.setFixedSize(350, 300)
 
         self.threadpool = QThreadPool()
         self.worker = Worker()
@@ -123,6 +144,10 @@ class Ventana(QMainWindow):
 
         self.boton_led.clicked.connect(self.prender_led)
 
+        self.boton_activar_wifi.clicked.connect(self.activar_senal_digital)
+        self.boton_activar_socket.clicked.connect(self.activar_senal_digital)
+        self.boton_activar_websocket.clicked.connect(self.activar_senal_digital)
+
     def cambiar_boton_encender(self, valor):
         self.cambiar_estado_boton(self.etiqueta_inidicador_encendido, valor)
 
@@ -134,6 +159,15 @@ class Ventana(QMainWindow):
 
         if self.mi_controlador:
             self.mi_controlador.prender_led(estado)
+
+    def activar_senal_digital(self, estado):
+        # print("Encendiendo el led")
+        boton = self.sender()
+        if isinstance(boton, BotonConSenal):
+            print(f"Encendiendo el led: indice_encendido={boton.indice_encendido}, indice_apagado={boton.indice_apagado}")
+
+            if self.mi_controlador:
+                self.mi_controlador.activar_senal(estado, boton.indice_encendido, boton.indice_apagado)
 
 
     def cambiar_estado_boton(self, boton, estado):
@@ -160,6 +194,19 @@ class Ventana(QMainWindow):
         self.mi_controlador = controlador
 
     def closeEvent(self, event:QCloseEvent):
+        respuesta = QMessageBox.question(self, 'Cerrar Aplicación',
+                                    "¿Estás seguro de que quieres salir?",
+                                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                    QMessageBox.StandardButton.No)
+        if respuesta == QMessageBox.StandardButton.Yes:
+            if self.mi_controlador:
+                self.mi_controlador.detener()
+            event.accept()
+        else:
+            event.ignore()
+
+
+
         print("SE presiono el boton cerrar")
         if self.mi_controlador:
             self.mi_controlador.detener()

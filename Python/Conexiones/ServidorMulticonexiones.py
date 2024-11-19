@@ -2,7 +2,7 @@ import socket
 import threading
 
 class ServidorSocket:
-    DIRECCION = "192.168.0.115"
+    DIRECCION = "192.168.0.11"
     PUERTO = 65440
 
     def __init__(self):
@@ -14,10 +14,10 @@ class ServidorSocket:
         self.cliente_socket = None
         self.iniciar_conexiones()
         
-    def simulador_datos(self):
-        contador = 0
-        while True:
-            if self.cliente_socket and self.cliente_socket.
+    # def simulador_datos(self):
+    #     contador = 0
+    #     while True:
+    #         if self.cliente_socket and self.cliente_socket.
     def iniciar_conexiones(self):
         print(f"Escuchando en la dirección {self.DIRECCION} : {self.PUERTO}")
 

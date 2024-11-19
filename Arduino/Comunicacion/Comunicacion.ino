@@ -113,6 +113,12 @@ byte obtenerByteDeArregloByte(byte* );
 #define ENVIAR_TEMPERATURA 50 //2
 #define MOD_BANDERA 52 //4
 
+#define CONFIGURAR_ANALOG 53          // 5
+#define CONFIGURADO_ANALOG 54         // 6
+ 
+#define CONFIGURAR_TEMPORIZADOR 55    // 7
+#define CONFIGURADO_TEMPORIZADOR 56   // 8
+
 
 void enviarTemperatura();
 
@@ -134,29 +140,42 @@ HardwareSerial mySerial(1);
 
 // Comunicación WIFI
 #include <WiFi.h>
-#include <WiFiClient.h>
 
 //const char* ssid="ardilluda2";
 const char* ssid="ardilluda";
 const char* password = "01971101";
 
-const char* server_ip = "192.168.0.115";
+// Comunicación Socket
+#include <WiFiClient.h>
+
+const char* server_ip = "192.168.0.11";
 const int server_port = 65440;
 
-WiFiClient cliente;
+WiFiClient socketClient;
 
 enum EstadoWifi {
   SIN_CONEXION = 0,
   CONECTANDO = 1,
   CONEXION_ESTABLECIDA = 2,
-  CLIENTE_DESCONECTADO = 3,
-  CLIENTE_COMUNICADO = 4
+  SOCKET_COMUNICADO = 3,
+  WEBSOCKET_COMUNICADO = 4
 };
 EstadoWifi estadoConexionWifi = SIN_CONEXION;
 
 void controlWifi(void *);
+int contadorSocket = 0;
+// Comunicación Websocket
+
+#include <ArduinoWebsockets.h>
+// by Gil Maimon
+
+websockets::WebsocketsClient webSocketClient;
+
+const char* webSocketServer = "ws://192.168.0.115:8000/ws/chat/";
+
 
 // Comunicacion Bluetooth
+
 
 void setup() {
 
@@ -316,6 +335,9 @@ void obtenerInstruccion(){
   byte indice = 0;
   byte valor = 0;
 
+  float m = 0;
+  float b = 0;
+
   switch(tipoDeInstruccion){
     
     case ADMINISTRACION:
@@ -338,6 +360,13 @@ void obtenerInstruccion(){
 
             M[indice] = valor;
            break;
+
+          case CONFIGURAR_ANALOG:
+             indice =obtenerByteDeArregloByte(cadena + 6) ;
+             m =obtenerFloatDeArregloByte(cadena + 7) ;
+             b =obtenerFloatDeArregloByte(cadena + 11) ;
+          
+            break;
         }
       break;
   }
@@ -354,6 +383,11 @@ byte obtenerByteDeArregloByte(byte* arreglo) {
   return *punteroByte;
 }
 
+float obtenerFloatDeArregloByte(byte* arreglo) {
+  float *puntero;
+  puntero = (float *) arreglo;
+  return *puntero;
+}
 
 void actualizarSenalesDigitales() {
   X0 = digitalRead(DI0);
@@ -403,7 +437,7 @@ void escribirVariablesAnalogicasEnEEPROM (int indice, float m, float b) {
   int direccion1 = 2 * indice * sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
   int direccion2 = (2 * indice + 1 )* sizeof(float) + obtenerDireccionMemoriaEEPROM(EEPROM_ANALOG);
 
-  Serial.print("Imprimiendo VA ");
+  Serial.print("Guardando VA-");
   Serial.print(indice);
   Serial.print(" ");
   Serial.print(direccion1);
@@ -470,14 +504,20 @@ void controlWifi(void *pvParametros) {
     RC[60] = (M[60] || RC[60]) && !M[61];
 
     // Manejo de la conexión con el servidor socket
-    RC[61] = RC[60] & (M[62] || RC[61]) && !M[63];
+    RC[61] = RC[60] & (M[62] || RC[61]) && !M[63] & !RC[62];
 
+    // Manejo de la conexión con el servidor websocket
+    RC[62] = RC[60] & (M[64] || RC[62]) && !M[65] & !RC[61];
+ 
 
     M[60] = 0;
     M[61] = 0;
 
     M[62] = 0;
     M[63] = 0;
+
+    M[64] = 0;
+    M[65] = 0;
 
     // Temporizador
     TON[24].entrada = !TON[24].salida;
@@ -526,14 +566,30 @@ void controlWifi(void *pvParametros) {
         case CONEXION_ESTABLECIDA:
 
           if (RC[60]) {
+
+            Serial.print("RC[61]: ");
+            Serial.print(RC[61]);
+
+            Serial.print(" RC[61]: ");
+            Serial.println(RC[61]);
+
             if (RC[61]) {
-                if (!cliente.connected()){
-                    Serial.print("Conexión perdidad, reconectando");
-                    cliente.connect(server_ip, server_port);
+                if (!socketClient.connected()){
+                    mySerial.print("Conexión perdida, reconectando");
+                    socketClient.connect(server_ip, server_port);
                 } else {
-                    estadoConexionWifi = CLIENTE_COMUNICADO;
+                    estadoConexionWifi = SOCKET_COMUNICADO;
                 }
-            } 
+            }     
+            if (RC[62]) {
+                if (!webSocketClient.available()){
+                  Serial.print("Conectando al servidor websocket");
+                  webSocketClient.connect(webSocketServer);
+                } else {
+                    estadoConexionWifi = WEBSOCKET_COMUNICADO;
+                }
+            }
+            
             
           } else {
             estadoConexionWifi = SIN_CONEXION;
@@ -541,13 +597,40 @@ void controlWifi(void *pvParametros) {
           }
           break;
         
-        
-        case CLIENTE_DESCONECTADO:
+        case SOCKET_COMUNICADO:
+
+          if (!RC[61]) {
+            socketClient.stop();
+            estadoConexionWifi = CONEXION_ESTABLECIDA;
+          }
+          
+          if (!socketClient.connected()){
+              estadoConexionWifi = CONEXION_ESTABLECIDA;
+          } else {
+            // Se podran transmitir datos
+            
+              contadorSocket++;
+              mySerial.print("Contador: ");
+              mySerial.println(contadorSocket);
+              socketClient.print(contadorSocket);
+
+              if (mySerial.available() > 0 ){
+              char buffer[64];
+              int bytesRead = mySerial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+              buffer[bytesRead] = '\0';
+              socketClient.print(String(buffer));
+            }
+
+
+          }
+          break;
+
+
+        case WEBSOCKET_COMUNICADO:
         
           break;
         
-        case CLIENTE_COMUNICADO:
-          break;
+
         
 
       }

@@ -17,6 +17,14 @@ class Caja(QLabel):
         super().__init__()
         self.setStyleSheet(f"Background-color:{color}")
 
+class BotonConSenal(QPushButton):
+    def __init__(self, nombre, indice_encendido, indice_apagado):
+        super().__init__()
+        self.setText(nombre)
+        self.indice_encendido = indice_encendido
+        self.indice_apagado = indice_apagado
+
+
 class WorkerSignals(QObject):
     parpadeo = Signal(bool)
     texto_temperatura = Signal(str)
@@ -79,7 +87,33 @@ class Ventana(QMainWindow):
 
         self.boton_led = QPushButton("LED")
         self.boton_led.setCheckable(True)
+
+        self.boton_activar_wifi = BotonConSenal("Activar Wifi", 60, 61)
+        self.boton_activar_wifi.setCheckable(True)
       
+        self.boton_activar_socket = BotonConSenal("Activar Socket", 62, 63)
+        self.boton_activar_socket.setCheckable(True)
+      
+        self.boton_activar_websocket = BotonConSenal("Activar Websocket", 64, 65)
+        self.boton_activar_websocket.setCheckable(True)
+      
+        self.etiqueta_m = QLabel("m")
+        self.text_m = QLineEdit()
+        self.etiqueta_b = QLabel("b")
+        self.text_b = QLineEdit()
+        self.boton_enviar_analog = QPushButton("Configurar")
+
+        widget_temperatura = QWidget()
+        layout_temperatura = QGridLayout()
+        widget_temperatura.setLayout(layout_temperatura)
+
+        layout_temperatura.addWidget(self.etiqueta_m, 0, 0)
+        layout_temperatura.addWidget(self.text_m, 0, 1)
+        layout_temperatura.addWidget(self.etiqueta_b, 0, 2)
+        layout_temperatura.addWidget(self.text_b, 0, 3)
+        layout_temperatura.addWidget(self.boton_enviar_analog, 0, 4)
+
+
         layout_vertical1.addLayout(layout_superior)
         layout_vertical1.addLayout(layout_inferior)
 
@@ -90,8 +124,14 @@ class Ventana(QMainWindow):
         layout_superior.addWidget(caja5, 0, 2, 2, 1)
         layout_superior.addWidget(self.boton_led, 2, 0, 1, 2)
         layout_superior.addWidget(self.caja9, 2, 2, 1, 1)
-        layout_superior.addWidget(etiqueta_temperatura, 3, 0, 1, 2)
-        layout_superior.addWidget(self.valor_temperatura, 3, 2, 1, 1)
+        layout_superior.addWidget(self.boton_activar_wifi, 3, 0, 1, 2)
+        layout_superior.addWidget(self.boton_activar_socket, 4, 0, 1, 2)
+        layout_superior.addWidget(self.boton_activar_websocket, 5, 0, 1, 2)
+
+
+        layout_superior.addWidget(etiqueta_temperatura, 6, 0, 1, 2)
+        layout_superior.addWidget(self.valor_temperatura, 6, 2, 1, 1)
+        layout_superior.addWidget(widget_temperatura, 7, 0, 1,3)
 
         layout_inferior.addWidget(boton_aceptar)
         layout_inferior.addWidget(boton_cancelar)
@@ -99,7 +139,7 @@ class Ventana(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout_vertical1)
         self.setCentralWidget(widget)
-        self.setFixedSize(350, 200)
+        self.setFixedSize(350, 330)
 
         self.threadpool = QThreadPool()
         self.worker = Worker()
@@ -123,6 +163,17 @@ class Ventana(QMainWindow):
 
         self.boton_led.clicked.connect(self.prender_led)
 
+        self.boton_activar_wifi.clicked.connect(self.activar_senal_digital)
+        self.boton_activar_socket.clicked.connect(self.activar_senal_digital)
+        self.boton_activar_websocket.clicked.connect(self.activar_senal_digital)
+
+    def activar_senal_digital(self, estado):
+        boton = self.sender()
+        if isinstance(boton, BotonConSenal):
+            print(f"Activando la señal digital indice_encendido: {boton.indice_encendido} indice_apagado: {boton.indice_apagado} estado: {estado}")
+            if self.mi_controlador:
+                self.mi_controlador.activar_senal(estado, boton.indice_encendido, boton.indice_apagado)
+                
     def cambiar_boton_encender(self, valor):
         self.cambiar_estado_boton(self.etiqueta_inidicador_encendido, valor)
 

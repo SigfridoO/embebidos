@@ -30,6 +30,7 @@ urlpatterns = [
     path('empaquetadora/', views.empaquetadora, name='empaquetadora'),
     path('domotica/', views.domotica, name='domotica'),
     path('hidroponia/', views.hidroponia, name='hidroponia'),
+    path('riego/', views.riego, name='riego'),
     path('mapa/', views.mapa, name='mapa'),
 
     path('chat/', include(urlpatterns_chat)),

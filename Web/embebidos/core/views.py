@@ -17,5 +17,8 @@ def empaquetadora(request):
 def hidroponia(request):
     return render(request, "core/hidroponia.html")
 
+def riego(request):
+    return render(request, "core/riego.html")
+
 def mapa(request):
     return render(request, "core/mapa.html")

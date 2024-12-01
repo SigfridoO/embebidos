@@ -132,40 +132,6 @@ void leerVariablesAnalogicasEnEEPROM (int);
 int obtenerDireccionMemoriaEEPROM(int);
 
 
-// Comunicación WIFI
-#include <WiFi.h>
-
-const char* ssid = "ardilluda2";
-const char* password = "01971101";
-
-// Comunicacion Socket
-#include <WiFiClient.h>
-
-enum EstadoWifi {
-  SIN_CONEXION = 0,
-  CONECTANDO = 1,
-  CONEXION_ESTABLECIDA = 2,
-  SOCKET_COMUNICADO = 3,
-  WEBSOCKET_COMUNICADO =  4
-};
-EstadoWifi estadoConexionWifi = SIN_CONEXION;
-
-void controlWifi(void *);
-int contadorSocket = 0;
-
-WiFiClient socketClient;
-const char* server_ip = "192.168.0.115";
-const int server_port = 65440;
-
-
-// Serial1
-#define TXD1 21
-#define RXD1 19
-
-HardwareSerial mySerial(1);
-
-
-
 void setup() {
 
   // Puerto Serie
@@ -185,8 +151,6 @@ void setup() {
 
   // Configuracion del puerto serie
   Serial.begin(115200);
-  mySerial.begin(115200, SERIAL_8N1, RXD1, TXD1);
-  
   EEPROM.begin(TAMANIO_MEMORIA_EEPROM);
   escribirVariablesAnalogicasEnEEPROM(2, 34.5, -3.45); // (indice, m, b)
   leerVariablesAnalogicasEnEEPROM (2);
@@ -194,10 +158,6 @@ void setup() {
   // Temporizadores
   TON[0].tiempo = (unsigned long) 1000;
   TON[1].tiempo = (unsigned long) 500;
-
-  TON[24].tiempo = (unsigned long) 1000;
-
-  xTaskCreatePinnedToCore(controlWifi, "controlWifi", 8192, NULL, 1, NULL, 0);
 }
 
 void loop() {
@@ -371,6 +331,11 @@ float obtenerFloatDeArregloByte(byte* arreglo) {
   return *puntero;
 }
 
+float obtenerFloatDeArregloByte(byte* arreglo) {
+  float *puntero;
+  puntero = (float *) arreglo;
+  return *puntero;
+}
 
 void actualizarSenalesDigitales() {
   X0 = digitalRead(DI0);
@@ -475,116 +440,4 @@ int obtenerDireccionMemoriaEEPROM(int opcion) {
       break;
   }
   return direccionInicial;
-}
-
-
-void controlWifi(void *pvParametros) {
-
-  EstadoWifi estadoActual;
-  while(true) {
-
-    // Manejo de la conexión WIFI
-    RC[60]=(M[60] || RC[60]) && !M[61];
-
-    // Manejo del socket IP:puerto
-    RC[61]=RC[60] && (M[62]||RC[61]) && !M[63] && !RC[62];
-
-
-    M[60] = 0;
-    M[61] = 0;
-    
-    TON[24].entrada = !TON[24].salida;
-    actualizarTON(24);
-
-    if (TON[24].salida) {
-      contadorSocket++;
-      mySerial.print("Estado Conexión: ");
-      mySerial.print(estadoConexionWifi);
-      mySerial.print(" Contador: ");
-      mySerial.println(contadorSocket);
-
-      estadoActual = estadoConexionWifi;
-
-      switch(estadoActual){
-          case SIN_CONEXION:
-              if (RC[60]) {
-                  estadoConexionWifi = CONECTANDO;
-                  mySerial.println("Conectando a la red");
-                  WiFi.begin(ssid, password);
-              }
-             break;
-
-          case CONECTANDO:
-              if(RC[60]) {
-                  if (WiFi.status() != WL_CONNECTED) {
-                    mySerial.print(".");
-
-                  } else {
-                    estadoConexionWifi = CONEXION_ESTABLECIDA;
-                    mySerial.println();
-                    mySerial.println("Conexion Establecida");
-                    mySerial.println("Direccion IP: ");
-                    mySerial.println(WiFi.localIP());
-                  }
-                
-              } else {
-                estadoConexionWifi = SIN_CONEXION;
-                WiFi.disconnect();
-              }
-          
-             break;
-
-          case CONEXION_ESTABLECIDA:
-              if(RC[60]) {
-  
-                  if (RC[61]) {
-                      if (!socketClient.connected()) {
-                        socketClient.connect(server_ip, server_port);
-                      }  else {
-                        estadoConexionWifi = SOCKET_COMUNICADO;
-                      }
-                  }
-                  
-              }else {
-                  estadoConexionWifi = SIN_CONEXION;
-                  WiFi.disconnect();
-              }
-             break;
-
-          case SOCKET_COMUNICADO:
-              if (!RC[61]) {
-                socketClient.stop();
-                estadoConexionWifi = CONEXION_ESTABLECIDA;
-              }
-          
-              if (!socketClient.connected()) {
-                estadoConexionWifi = CONEXION_ESTABLECIDA;
-              } else{
-                // En este punto se pueden transmitir datos
-
-                mySerial.print("Contador: ");
-                mySerial.println(contadorSocket);
-                socketClient.print(contadorSocket);
-
-                if (mySerial.available() > 0 ){
-                  char buffer[64];
-                  int bytesRead = mySerial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
-                  buffer[bytesRead] = '\0';
-                  socketClient.print(String(buffer));
-                }
-                
-              }
-
-          
-             break;
-
-          case WEBSOCKET_COMUNICADO:
-             break;
-             
-      }
-
-      
-    }
-    delay(1);
-  }
 }

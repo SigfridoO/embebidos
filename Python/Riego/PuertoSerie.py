@@ -6,7 +6,7 @@ from Convertidor import Convertidor
 class PuertoSerie:
     def __init__(self):
         self.puerto_serie = serial.Serial()
-        self.puerto_serie.port = "/dev/ttyUSB0"
+        self.puerto_serie.port = "/dev/ttyUSB1"
         self.puerto_serie.baudrate = 115200
         self.puerto_serie.parity = serial.PARITY_NONE
         self.puerto_serie.timeout = 1

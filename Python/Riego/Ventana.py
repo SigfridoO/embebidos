@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, \
     QPushButton, QLabel, QLineEdit, QSpinBox, QDoubleSpinBox, \
-    QComboBox, QWidget, \
+    QComboBox, QWidget, QMessageBox,  \
     QHBoxLayout, QVBoxLayout, QGridLayout
 from PyQt6.QtCore import Qt, QObject, QRunnable, QThreadPool, pyqtSignal as Signal
 from PyQt6.QtGui import QFont, QPixmap, QCloseEvent
@@ -23,7 +23,7 @@ class BotonConSenal(QPushButton):
         self.setText(nombre)
         self.indice_encendido = indice_encendido
         self.indice_apagado = indice_apagado
-
+    
 
 class WorkerSignals(QObject):
     parpadeo = Signal(bool)
@@ -139,7 +139,7 @@ class Ventana(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout_vertical1)
         self.setCentralWidget(widget)
-        self.setFixedSize(350, 330)
+        self.resize(350, 320)
 
         self.threadpool = QThreadPool()
         self.worker = Worker()
@@ -186,6 +186,15 @@ class Ventana(QMainWindow):
         if self.mi_controlador:
             self.mi_controlador.prender_led(estado)
 
+    def activar_senal_digital(self, estado):
+        # print("Encendiendo el led")
+        boton = self.sender()
+        if isinstance(boton, BotonConSenal):
+            print(f"Encendiendo el led: indice_encendido={boton.indice_encendido}, indice_apagado={boton.indice_apagado}")
+
+            if self.mi_controlador:
+                self.mi_controlador.activar_senal(estado, boton.indice_encendido, boton.indice_apagado)
+
 
     def cambiar_estado_boton(self, boton, estado):
         color = "red"
@@ -211,6 +220,19 @@ class Ventana(QMainWindow):
         self.mi_controlador = controlador
 
     def closeEvent(self, event:QCloseEvent):
+        respuesta = QMessageBox.question(self, 'Cerrar Aplicación',
+                                    "¿Estás seguro de que quieres salir?",
+                                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                    QMessageBox.StandardButton.No)
+        if respuesta == QMessageBox.StandardButton.Yes:
+            if self.mi_controlador:
+                self.mi_controlador.detener()
+            event.accept()
+        else:
+            event.ignore()
+
+
+
         print("SE presiono el boton cerrar")
         if self.mi_controlador:
             self.mi_controlador.detener()

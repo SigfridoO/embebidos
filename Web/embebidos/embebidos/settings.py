@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "app.chat",
     "app.front",
     "core",
+    "proyectos2024"
 ]
 
 MIDDLEWARE = [

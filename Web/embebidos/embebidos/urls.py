@@ -22,16 +22,20 @@ from django.conf import settings
 
 from app.front.urls import urlpatterns_chat
 
+from proyectos2024.urls import proyectos2024_urlpatterns
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.home, name='home'),
     
-    path('cocos/', views.cocos, name='cocos'),
-    path('empaquetadora/', views.empaquetadora, name='empaquetadora'),
-    path('domotica/', views.domotica, name='domotica'),
-    path('hidroponia/', views.hidroponia, name='hidroponia'),
-    path('riego/', views.riego, name='riego'),
-    path('mapa/', views.mapa, name='mapa'),
+    # path('cocos/', views.cocos, name='cocos'),
+    # path('empaquetadora/', views.empaquetadora, name='empaquetadora'),
+    # path('domotica/', views.domotica, name='domotica'),
+    # path('hidroponia/', views.hidroponia, name='hidroponia'),
+    # path('riego/', views.riego, name='riego'),
+    # path('mapa/', views.mapa, name='mapa'),
+
+    path('proyectos2024/', include(proyectos2024_urlpatterns)),
 
     path('chat/', include(urlpatterns_chat)),
 ]

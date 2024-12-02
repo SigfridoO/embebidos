@@ -1,122 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chat</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'core/assets/bootstrap-5.3.3-dist/css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'core/css/style.css'%}" />
 </head>
+
 <body>
     <div class="container">
-        <h1>Chat con Django</h1>
-        <div class="row">
-            <aside class="col-md-6">
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" name="nombre" id="nombre" placeholder="Escribe aquí">
+        <h1 class="mt-4 text-center">Chat con Django</h1>
+        <div class="row mt-4">
+            <aside class="col-lg-4 mb-4">
 
+                <!-- Configurar alias -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input id="nombre" class="form-control" type="text" placeholder="Oveja programadora...">
                 </div>
+                <!-- Fin Configurar alias -->
+
             </aside>
-            <main class="col-md-6">
-                <section id="mensajes"></section>
-                <section class="form-group">
-                    <input type="text" name="texto" id="texto" placeholder="Nuevo mensaje...">
-                    <button id="enviar" class="btn btn-success">Enviar</button>
+            <main class="col-lg-8">
+
+                <!-- Mensajes -->
+                <section id="mensajes" class="mb-4 border rounded p-3" style="height: 300px; overflow-y: auto;"></section>
+                <!-- Fin Mensajes -->
+
+                <!-- Enviar mensajes -->
+                <section class="input-group mb-3">
+                    <input id="texto" class="form-control" type="text" placeholder="Nuevo mensaje...">
+                    <button id="enviar" class="btn btn-primary" type="button">Enviar</button>
                 </section>
+                <!-- Fin Enviar mensajes -->
+
             </main>
         </div>
     </div>
-    
-    <script src="{% static 'core/jquery/jquery.js' %}"></script>
-    <script src="{% static 'core/popper/popper.js' %}"></script>
-    <script src="{% static 'core/assets/bootstrap-5.3.3-dist/js/bootstrap.min.js' %}"></script>
-    <script>
-
-        const SALA_CHAT = 'python';
-        // Conecta con WebSockets
-        const CHAT_SOCKET = new WebSocket('ws://192.168.0.115:8000/ws/chat/' + SALA_CHAT + '/');
-
-
-        const botonEnviar = document.querySelector('#enviar');
-        const mensajes = document.querySelector('#mensajes');
-        
-        const campoNombre = document.querySelector("#nombre");
-        const campoTexto = document.querySelector("#texto");
-
-        //console.log({campoNombre});
-        //console.log({campoTexto});
-
-
-        // function enviarNuevoMensaje() {
-        //     console.log("Se enviará un nuevo mensaje");
-
-        //     console.log(campoNombre.value);
-        //     console.log(campoTexto.value);
-        // }
-
-
-        function anyadirNuevoMensajeAlHTML(nombre, texto, propio = false) {
-            // Contenedor
-            const MI_CONTENEDOR = document.createElement('div');
-            MI_CONTENEDOR.classList.add(propio ? 'bg-primary' : 'bg-secondary', 'p-2');
-            // Nombre
-            const MI_NOMBRE = document.createElement('h2')
-            MI_NOMBRE.classList.add('text-tiny', 'text-bold', 'mt-2');
-            MI_NOMBRE.textContent = nombre;
-            MI_CONTENEDOR.appendChild(MI_NOMBRE);
-            // Texto
-            const MI_TEXTO = document.createElement('p');
-            MI_TEXTO.classList.add('my-2');
-            MI_TEXTO.textContent = texto;
-            MI_CONTENEDOR.appendChild(MI_TEXTO);
-            // Anyade todo a mensajes
-            mensajes.appendChild(MI_CONTENEDOR);
-        }
-
-        /**
-         * Método que envia el mensaje al consumer por medio de WebSockets
-         */
-        function enviarNuevoMensaje() {
-            // Envia al WebSocket un nuevo mensaje
-            CHAT_SOCKET.send(JSON.stringify({
-                name: campoNombre.value,
-                text: campoTexto.value
-            }));
-            // Limpiamos el campo donde hemos escrito
-            campoTexto.value = '';
-            // Le volvemos a dar el foco para escribir otro mensaje
-            campoTexto.focus();
-        }
-
-        /*
-         * EVENTOS
-         */
-
-        // Conectado
-        CHAT_SOCKET.addEventListener('open', () => {
-            console.log('Conectado');
-        });
-        // Desconectado
-        CHAT_SOCKET.addEventListener('close', () => {
-            console.log('Desconectado');
-        });
-
-        // Recibir mensaje
-        CHAT_SOCKET.addEventListener('message', (event) => {
-            console.log('Recibido nuevo mensaje');
-            const MI_NUEVA_DATA = JSON.parse(event.data);
-            anyadirNuevoMensajeAlHTML(MI_NUEVA_DATA.name, MI_NUEVA_DATA.text, MI_NUEVA_DATA.name === campoNombre.value);
-        });
-
-
-        //console.log(botonEnviar);
-
-
-        botonEnviar.addEventListener('click', enviarNuevoMensaje);
-
-
-    </script>
+    <script src="{% static 'chat.js'%}"></script>
 </body>
+
 </html>
